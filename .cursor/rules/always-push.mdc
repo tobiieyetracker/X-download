@@ -1,0 +1,12 @@
+---
+description: Always commit and push local changes to origin
+alwaysApply: true
+---
+
+# Git push policy
+
+Whenever this project has local modifications that should be kept (docs, code, shortcut builds, etc.):
+
+1. Commit with a clear message (author: `tobiieyetracker` / `tobiieyetracker@users.noreply.github.com` via `git -c`, do not change global git config).
+2. Push to `origin` (`main`) immediately after the commit.
+3. Do not wait for the user to ask again to push — they requested continuous push for local changes.

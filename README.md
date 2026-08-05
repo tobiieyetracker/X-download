@@ -32,13 +32,36 @@ python best_quality_download.py "链接"
 
 ## iOS 快捷指令（未签名）
 
-`dist/X-Download.shortcut` 为未签名包。iOS 15+ 通常需 Mac 签名后再导入：
+未签名包：`dist/X-Download.shortcut`  
+
+iOS 15+ 通常**不能直接导入**未签名文件，需在 **Mac** 上签名后再装到 iPhone。
+
+### 在 Mac 上签名并安装
+
+1. 把 `dist/X-Download.shortcut` 拷到 Mac（需已登录 Apple ID，并装有「快捷指令」）。
+2. 在终端执行：
 
 ```bash
-shortcuts sign --mode anyone --input dist/X-Download.shortcut --output dist/X-Download-signed.shortcut
+shortcuts sign \
+  --mode anyone \
+  --input dist/X-Download.shortcut \
+  --output dist/X-Download-signed.shortcut
 ```
 
-或按 `MODES.md` / `IPHONE_BUILD.md` 在手机上对照搭建。
+- `--mode anyone`：任何人可添加（自用/分享都方便）
+- 仅自己用可改为：`--mode people-who-know-me`
+
+3. 装到 iPhone（任选其一）：
+   - 隔空投送 `X-Download-signed.shortcut` 到手机，用「快捷指令」打开
+   - 或放到 iCloud，手机上打开
+   - 或在 Mac「快捷指令」导入后，分享 → **拷贝 iCloud 链接**，手机用链接获取
+
+4. 注意：
+   - 签名只能在 Mac 做，Windows 不行
+   - 改过快捷指令逻辑后，需要**重新签名**再导入
+   - 若提示找不到 `shortcuts` 命令，确认 macOS /「快捷指令」版本够新
+
+也可不导入文件，按 `MODES.md` / `IPHONE_BUILD.md` 在手机上对照搭建。
 
 ## 文档
 
@@ -47,7 +70,7 @@ shortcuts sign --mode anyone --input dist/X-Download.shortcut --output dist/X-Do
 | `MODES.md` | 菜单模式与接口映射 |
 | `QUALITY_RULES.md` | 最高清选质规则 |
 | `PATTERN.md` | 原版流程模式分析 |
-| `dist/README.md` | 快捷指令包说明 |
+| `dist/README.md` | 快捷指令包与 Mac 签名说明 |
 
 ## 说明
 
