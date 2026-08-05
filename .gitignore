@@ -1,0 +1,27 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+
+# Downloads / local test media
+sim_download/
+*.mp4
+*.jpg
+*.jpeg
+*.png
+*.webp
+
+# Keep shortcut packages, ignore accidental large dumps
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# IDE
+.idea/
+.vscode/
+*.swp

@@ -1,0 +1,2314 @@
+{
+  "WFWorkflowClientVersion": "4711",
+  "WFWorkflowMinimumClientVersion": 900,
+  "WFWorkflowMinimumClientVersionString": "900",
+  "WFWorkflowIcon": {
+    "WFWorkflowIconStartColor": 431817727,
+    "WFWorkflowIconGlyphNumber": 59750
+  },
+  "WFWorkflowTypes": [
+    "ActionExtension",
+    "WFWorkflowTypeShowInSearch"
+  ],
+  "WFQuickActionSurfaces": [],
+  "WFWorkflowHasShortcutInputVariables": true,
+  "WFWorkflowHasOutputFallback": false,
+  "WFWorkflowOutputContentItemClasses": [],
+  "WFWorkflowInputContentItemClasses": [
+    "WFURLContentItem",
+    "WFSafariWebPageContentItem",
+    "WFStringContentItem",
+    "WFRichTextContentItem"
+  ],
+  "WFWorkflowNoInputBehavior": {
+    "Name": "WFWorkflowNoInputBehaviorGetClipboard",
+    "Parameters": {}
+  },
+  "WFWorkflowImportQuestions": [],
+  "WFWorkflowActions": [
+    {
+      "WFWorkflowActionIdentifier": "is.workflow.actions.comment",
+      "WFWorkflowActionParameters": {
+        "WFCommentActionText": "X下载·自用（未签名包）\n\n菜单：默认 / 图片 / 单视频 / 多视频 / GIF\n主接口：https://dwnld.nichind.dev/\n（download.nichind.dev 公开 API）\n\n不用：疯果配置中心、fenguox 私人域名、tvdl 鉴权接口\n选质：以 nichind 返回为准（图常 4096x4096，视频常最高档）\n\n导入：未签名，需旧系统中转或 Mac 签名，或在手机上对照重搭。"
+      }
+    },
+    {
+      "WFWorkflowActionIdentifier": "is.workflow.actions.setvariable",
+      "WFWorkflowActionParameters": {
+        "WFInput": {
+          "Value": {
+            "Type": "ExtensionInput"
+          },
+          "WFSerializationType": "WFTextTokenAttachment"
+        },
+        "WFVariableName": "inputURL"
+      }
+    },
+    {
+      "WFWorkflowActionIdentifier": "is.workflow.actions.choosefrommenu",
+      "WFWorkflowActionParameters": {
+        "WFMenuPrompt": "选择模式",
+        "WFControlFlowMode": 0,
+        "WFMenuItems": [
+          "默认",
+          "图片",
+          "单视频",
+          "多视频",
+          "GIF"
+        ],
+        "GroupingIdentifier": "39BD431B-DE1B-4949-B720-CCE0CFD73389"
+      }
+    },
+    {
+      "WFWorkflowActionIdentifier": "is.workflow.actions.choosefrommenu",
+      "WFWorkflowActionParameters": {
+        "WFMenuItemTitle": "默认",
+        "GroupingIdentifier": "39BD431B-DE1B-4949-B720-CCE0CFD73389",
+        "WFControlFlowMode": 1
+      }
+    },
+    {
+      "WFWorkflowActionIdentifier": "is.workflow.actions.downloadurl",
+      "WFWorkflowActionParameters": {
+        "UUID": "F41D1953-DFB1-41E2-A93D-4E14C2599ABC",
+        "ShowHeaders": true,
+        "WFURL": "https://dwnld.nichind.dev/",
+        "WFHTTPMethod": "POST",
+        "WFHTTPBodyType": "JSON",
+        "WFJSONValues": {
+          "Value": {
+            "WFDictionaryFieldValueItems": [
+              {
+                "WFKey": {
+                  "Value": {
+                    "string": "url"
+                  },
+                  "WFSerializationType": "WFTextTokenString"
+                },
+                "WFItemType": 0,
+                "WFValue": {
+                  "Value": {
+                    "string": "￼",
+                    "attachmentsByRange": {
+                      "{0, 1}": {
+                        "VariableName": "inputURL",
+                        "Type": "Variable"
+                      }
+                    }
+                  },
+                  "WFSerializationType": "WFTextTokenString"
+                }
+              }
+            ]
+          },
+          "WFSerializationType": "WFDictionaryFieldValue"
+        },
+        "WFHTTPHeaders": {
+          "Value": {
+            "WFDictionaryFieldValueItems": [
+              {
+                "WFKey": {
+                  "Value": {
+                    "string": "Accept"
+                  },
+                  "WFSerializationType": "WFTextTokenString"
+                },
+                "WFItemType": 0,
+                "WFValue": {
+                  "Value": {
+                    "string": "application/json"
+                  },
+                  "WFSerializationType": "WFTextTokenString"
+                }
+              },
+              {
+                "WFKey": {
+                  "Value": {
+                    "string": "Content-Type"
+                  },
+                  "WFSerializationType": "WFTextTokenString"
+                },
+                "WFItemType": 0,
+                "WFValue": {
+                  "Value": {
+                    "string": "application/json"
+                  },
+                  "WFSerializationType": "WFTextTokenString"
+                }
+              }
+            ]
+          },
+          "WFSerializationType": "WFDictionaryFieldValue"
+        }
+      }
+    },
+    {
+      "WFWorkflowActionIdentifier": "is.workflow.actions.getvalueforkey",
+      "WFWorkflowActionParameters": {
+        "WFInput": {
+          "Value": {
+            "OutputUUID": "F41D1953-DFB1-41E2-A93D-4E14C2599ABC",
+            "Type": "ActionOutput",
+            "OutputName": "URL的内容"
+          },
+          "WFSerializationType": "WFTextTokenAttachment"
+        },
+        "UUID": "0225F90F-A32A-438B-8732-EF0DFF148364",
+        "WFDictionaryKey": "status"
+      }
+    },
+    {
+      "WFWorkflowActionIdentifier": "is.workflow.actions.conditional",
+      "WFWorkflowActionParameters": {
+        "WFInput": {
+          "Type": "Variable",
+          "Variable": {
+            "Value": {
+              "OutputUUID": "0225F90F-A32A-438B-8732-EF0DFF148364",
+              "Type": "ActionOutput",
+              "OutputName": "词典值",
+              "Aggrandizements": [
+                {
+                  "Type": "WFCoercionVariableAggrandizement",
+                  "CoercionItemClass": "WFStringContentItem"
+                }
+              ]
+            },
+            "WFSerializationType": "WFTextTokenAttachment"
+          }
+        },
+        "WFControlFlowMode": 0,
+        "WFCondition": 4,
+        "WFConditionalActionString": "picker",
+        "GroupingIdentifier": "A6709414-52B3-4F5E-A35E-B312A1846BD7"
+      }
+    },
+    {
+      "WFWorkflowActionIdentifier": "is.workflow.actions.getvalueforkey",
+      "WFWorkflowActionParameters": {
+        "WFInput": {
+          "Value": {
+            "OutputUUID": "F41D1953-DFB1-41E2-A93D-4E14C2599ABC",
+            "Type": "ActionOutput",
+            "OutputName": "URL的内容"
+          },
+          "WFSerializationType": "WFTextTokenAttachment"
+        },
+        "UUID": "9FF2B82F-3A90-475C-BFD9-9F6C7F8C8CD8",
+        "WFDictionaryKey": "picker"
+      }
+    },
+    {
+      "WFWorkflowActionIdentifier": "is.workflow.actions.conditional",
+      "WFWorkflowActionParameters": {
+        "WFInput": {
+          "Type": "Variable",
+          "Variable": {
+            "Value": {
+              "OutputUUID": "9FF2B82F-3A90-475C-BFD9-9F6C7F8C8CD8",
+              "Type": "ActionOutput",
+              "OutputName": "词典值",
+              "Aggrandizements": [
+                {
+                  "Type": "WFCoercionVariableAggrandizement",
+                  "CoercionItemClass": "WFStringContentItem"
+                }
+              ]
+            },
+            "WFSerializationType": "WFTextTokenAttachment"
+          }
+        },
+        "WFControlFlowMode": 0,
+        "WFCondition": 100,
+        "GroupingIdentifier": "53D129D1-435F-4388-BBC9-70DB974D539B"
+      }
+    },
+    {
+      "WFWorkflowActionIdentifier": "is.workflow.actions.repeat.each",
+      "WFWorkflowActionParameters": {
+        "WFInput": {
+          "Value": {
+            "OutputUUID": "9FF2B82F-3A90-475C-BFD9-9F6C7F8C8CD8",
+            "Type": "ActionOutput",
+            "OutputName": "词典值"
+          },
+          "WFSerializationType": "WFTextTokenAttachment"
+        },
+        "GroupingIdentifier": "9C5FB2EB-5107-45B5-A4BB-B44366A3F265",
+        "WFControlFlowMode": 0,
+        "UUID": "7F4A8364-9F48-4951-AD13-F3FAF7436979"
+      }
+    },
+    {
+      "WFWorkflowActionIdentifier": "is.workflow.actions.getvalueforkey",
+      "WFWorkflowActionParameters": {
+        "WFInput": {
+          "Value": {
+            "Type": "Variable",
+            "VariableName": "重复项目"
+          },
+          "WFSerializationType": "WFTextTokenAttachment"
+        },
+        "UUID": "40F0EE00-A87C-4DD2-A05D-3E2030A56E18",
+        "WFDictionaryKey": "type"
+      }
+    },
+    {
+      "WFWorkflowActionIdentifier": "is.workflow.actions.getvalueforkey",
+      "WFWorkflowActionParameters": {
+        "WFInput": {
+          "Value": {
+            "Type": "Variable",
+            "VariableName": "重复项目"
+          },
+          "WFSerializationType": "WFTextTokenAttachment"
+        },
+        "UUID": "796946D0-DAE2-4728-9697-EA41D0A89D74",
+        "WFDictionaryKey": "url"
+      }
+    },
+    {
+      "WFWorkflowActionIdentifier": "is.workflow.actions.conditional",
+      "WFWorkflowActionParameters": {
+        "WFInput": {
+          "Type": "Variable",
+          "Variable": {
+            "Value": {
+              "OutputUUID": "40F0EE00-A87C-4DD2-A05D-3E2030A56E18",
+              "Type": "ActionOutput",
+              "OutputName": "词典值",
+              "Aggrandizements": [
+                {
+                  "Type": "WFCoercionVariableAggrandizement",
+                  "CoercionItemClass": "WFStringContentItem"
+                }
+              ]
+            },
+            "WFSerializationType": "WFTextTokenAttachment"
+          }
+        },
+        "WFControlFlowMode": 0,
+        "WFCondition": 4,
+        "WFConditionalActionString": "photo",
+        "GroupingIdentifier": "291B062E-E5C3-49DF-A75D-A04572C1FAA6"
+      }
+    },
+    {
+      "WFWorkflowActionIdentifier": "is.workflow.actions.downloadurl",
+      "WFWorkflowActionParameters": {
+        "ShowHeaders": false,
+        "UUID": "735269D5-F836-478F-A344-1C393009424A",
+        "WFURL": {
+          "Value": {
+            "string": "￼",
+            "attachmentsByRange": {
+              "{0, 1}": {
+                "OutputUUID": "796946D0-DAE2-4728-9697-EA41D0A89D74",
+                "Type": "ActionOutput",
+                "OutputName": "词典值"
+              }
+            }
+          },
+          "WFSerializationType": "WFTextTokenString"
+        }
+      }
+    },
+    {
+      "WFWorkflowActionIdentifier": "is.workflow.actions.savetocameraroll",
+      "WFWorkflowActionParameters": {
+        "WFInput": {
+          "Value": {
+            "OutputUUID": "735269D5-F836-478F-A344-1C393009424A",
+            "Type": "ActionOutput",
+            "OutputName": "URL的内容"
+          },
+          "WFSerializationType": "WFTextTokenAttachment"
+        },
+        "UUID": "83308D46-AF77-4F6F-BAB3-FA2ABEAF2AE2"
+      }
+    },
+    {
+      "WFWorkflowActionIdentifier": "is.workflow.actions.conditional",
+      "WFWorkflowActionParameters": {
+        "WFControlFlowMode": 2,
+        "GroupingIdentifier": "291B062E-E5C3-49DF-A75D-A04572C1FAA6"
+      }
+    },
+    {
+      "WFWorkflowActionIdentifier": "is.workflow.actions.conditional",
+      "WFWorkflowActionParameters": {
+        "WFInput": {
+          "Type": "Variable",
+          "Variable": {
+            "Value": {
+              "OutputUUID": "40F0EE00-A87C-4DD2-A05D-3E2030A56E18",
+              "Type": "ActionOutput",
+              "OutputName": "词典值",
+              "Aggrandizements": [
+                {
+                  "Type": "WFCoercionVariableAggrandizement",
+                  "CoercionItemClass": "WFStringContentItem"
+                }
+              ]
+            },
+            "WFSerializationType": "WFTextTokenAttachment"
+          }
+        },
+        "WFControlFlowMode": 0,
+        "WFCondition": 4,
+        "WFConditionalActionString": "video",
+        "GroupingIdentifier": "8AB2C05F-76BB-4191-AC9F-FCDECECE88A2"
+      }
+    },
+    {
+      "WFWorkflowActionIdentifier": "is.workflow.actions.downloadurl",
+      "WFWorkflowActionParameters": {
+        "ShowHeaders": false,
+        "UUID": "B0C0354E-D595-4AFE-AEA2-5DE4A014370D",
+        "WFURL": {
+          "Value": {
+            "string": "￼",
+            "attachmentsByRange": {
+              "{0, 1}": {
+                "OutputUUID": "796946D0-DAE2-4728-9697-EA41D0A89D74",
+                "Type": "ActionOutput",
+                "OutputName": "词典值"
+              }
+            }
+          },
+          "WFSerializationType": "WFTextTokenString"
+        }
+      }
+    },
+    {
+      "WFWorkflowActionIdentifier": "is.workflow.actions.savetocameraroll",
+      "WFWorkflowActionParameters": {
+        "WFInput": {
+          "Value": {
+            "OutputUUID": "B0C0354E-D595-4AFE-AEA2-5DE4A014370D",
+            "Type": "ActionOutput",
+            "OutputName": "URL的内容"
+          },
+          "WFSerializationType": "WFTextTokenAttachment"
+        },
+        "UUID": "CE0A8EA7-E67B-4407-B149-F444CC661B9A"
+      }
+    },
+    {
+      "WFWorkflowActionIdentifier": "is.workflow.actions.conditional",
+      "WFWorkflowActionParameters": {
+        "WFControlFlowMode": 2,
+        "GroupingIdentifier": "8AB2C05F-76BB-4191-AC9F-FCDECECE88A2"
+      }
+    },
+    {
+      "WFWorkflowActionIdentifier": "is.workflow.actions.conditional",
+      "WFWorkflowActionParameters": {
+        "WFInput": {
+          "Type": "Variable",
+          "Variable": {
+            "Value": {
+              "OutputUUID": "40F0EE00-A87C-4DD2-A05D-3E2030A56E18",
+              "Type": "ActionOutput",
+              "OutputName": "词典值",
+              "Aggrandizements": [
+                {
+                  "Type": "WFCoercionVariableAggrandizement",
+                  "CoercionItemClass": "WFStringContentItem"
+                }
+              ]
+            },
+            "WFSerializationType": "WFTextTokenAttachment"
+          }
+        },
+        "WFControlFlowMode": 0,
+        "WFCondition": 4,
+        "WFConditionalActionString": "gif",
+        "GroupingIdentifier": "89E565D0-B3FD-45C9-ABFE-3F9A27F86BA6"
+      }
+    },
+    {
+      "WFWorkflowActionIdentifier": "is.workflow.actions.downloadurl",
+      "WFWorkflowActionParameters": {
+        "ShowHeaders": false,
+        "UUID": "3F8BF19A-E5A4-4577-8F67-04CA56713CEF",
+        "WFURL": {
+          "Value": {
+            "string": "￼",
+            "attachmentsByRange": {
+              "{0, 1}": {
+                "OutputUUID": "796946D0-DAE2-4728-9697-EA41D0A89D74",
+                "Type": "ActionOutput",
+                "OutputName": "词典值"
+              }
+            }
+          },
+          "WFSerializationType": "WFTextTokenString"
+        }
+      }
+    },
+    {
+      "WFWorkflowActionIdentifier": "is.workflow.actions.savetocameraroll",
+      "WFWorkflowActionParameters": {
+        "WFInput": {
+          "Value": {
+            "OutputUUID": "3F8BF19A-E5A4-4577-8F67-04CA56713CEF",
+            "Type": "ActionOutput",
+            "OutputName": "URL的内容"
+          },
+          "WFSerializationType": "WFTextTokenAttachment"
+        },
+        "UUID": "63AD0621-4B67-49D0-A650-1BD068E9BF2E"
+      }
+    },
+    {
+      "WFWorkflowActionIdentifier": "is.workflow.actions.conditional",
+      "WFWorkflowActionParameters": {
+        "WFControlFlowMode": 2,
+        "GroupingIdentifier": "89E565D0-B3FD-45C9-ABFE-3F9A27F86BA6"
+      }
+    },
+    {
+      "WFWorkflowActionIdentifier": "is.workflow.actions.repeat.each",
+      "WFWorkflowActionParameters": {
+        "GroupingIdentifier": "9C5FB2EB-5107-45B5-A4BB-B44366A3F265",
+        "WFControlFlowMode": 2
+      }
+    },
+    {
+      "WFWorkflowActionIdentifier": "is.workflow.actions.notification",
+      "WFWorkflowActionParameters": {
+        "WFNotificationActionBody": "✅ 已保存（默认：自动按类型）"
+      }
+    },
+    {
+      "WFWorkflowActionIdentifier": "is.workflow.actions.conditional",
+      "WFWorkflowActionParameters": {
+        "WFControlFlowMode": 1,
+        "GroupingIdentifier": "53D129D1-435F-4388-BBC9-70DB974D539B"
+      }
+    },
+    {
+      "WFWorkflowActionIdentifier": "is.workflow.actions.notification",
+      "WFWorkflowActionParameters": {
+        "WFNotificationActionBody": "❌ 解析失败或没有对应媒体"
+      }
+    },
+    {
+      "WFWorkflowActionIdentifier": "is.workflow.actions.conditional",
+      "WFWorkflowActionParameters": {
+        "WFControlFlowMode": 2,
+        "GroupingIdentifier": "53D129D1-435F-4388-BBC9-70DB974D539B"
+      }
+    },
+    {
+      "WFWorkflowActionIdentifier": "is.workflow.actions.conditional",
+      "WFWorkflowActionParameters": {
+        "WFControlFlowMode": 1,
+        "GroupingIdentifier": "A6709414-52B3-4F5E-A35E-B312A1846BD7"
+      }
+    },
+    {
+      "WFWorkflowActionIdentifier": "is.workflow.actions.getvalueforkey",
+      "WFWorkflowActionParameters": {
+        "WFInput": {
+          "Value": {
+            "OutputUUID": "F41D1953-DFB1-41E2-A93D-4E14C2599ABC",
+            "Type": "ActionOutput",
+            "OutputName": "URL的内容"
+          },
+          "WFSerializationType": "WFTextTokenAttachment"
+        },
+        "UUID": "97020D6F-9FF3-4DC4-A59C-852CF1397ED5",
+        "WFDictionaryKey": "url"
+      }
+    },
+    {
+      "WFWorkflowActionIdentifier": "is.workflow.actions.conditional",
+      "WFWorkflowActionParameters": {
+        "WFInput": {
+          "Type": "Variable",
+          "Variable": {
+            "Value": {
+              "OutputUUID": "97020D6F-9FF3-4DC4-A59C-852CF1397ED5",
+              "Type": "ActionOutput",
+              "OutputName": "词典值",
+              "Aggrandizements": [
+                {
+                  "Type": "WFCoercionVariableAggrandizement",
+                  "CoercionItemClass": "WFStringContentItem"
+                }
+              ]
+            },
+            "WFSerializationType": "WFTextTokenAttachment"
+          }
+        },
+        "WFControlFlowMode": 0,
+        "WFCondition": 100,
+        "GroupingIdentifier": "3F6B8CAA-EED9-46E0-9781-F4A01F37C513"
+      }
+    },
+    {
+      "WFWorkflowActionIdentifier": "is.workflow.actions.downloadurl",
+      "WFWorkflowActionParameters": {
+        "ShowHeaders": false,
+        "UUID": "DC9292D5-5FE9-4B84-A957-13535EA2868C",
+        "WFURL": {
+          "Value": {
+            "string": "￼",
+            "attachmentsByRange": {
+              "{0, 1}": {
+                "OutputUUID": "97020D6F-9FF3-4DC4-A59C-852CF1397ED5",
+                "Type": "ActionOutput",
+                "OutputName": "词典值"
+              }
+            }
+          },
+          "WFSerializationType": "WFTextTokenString"
+        }
+      }
+    },
+    {
+      "WFWorkflowActionIdentifier": "is.workflow.actions.savetocameraroll",
+      "WFWorkflowActionParameters": {
+        "WFInput": {
+          "Value": {
+            "OutputUUID": "DC9292D5-5FE9-4B84-A957-13535EA2868C",
+            "Type": "ActionOutput",
+            "OutputName": "URL的内容"
+          },
+          "WFSerializationType": "WFTextTokenAttachment"
+        },
+        "UUID": "6F78E8B7-B482-42A8-B0BD-7D4225F6E802"
+      }
+    },
+    {
+      "WFWorkflowActionIdentifier": "is.workflow.actions.notification",
+      "WFWorkflowActionParameters": {
+        "WFNotificationActionBody": "✅ 已保存（默认：自动按类型）"
+      }
+    },
+    {
+      "WFWorkflowActionIdentifier": "is.workflow.actions.conditional",
+      "WFWorkflowActionParameters": {
+        "WFControlFlowMode": 1,
+        "GroupingIdentifier": "3F6B8CAA-EED9-46E0-9781-F4A01F37C513"
+      }
+    },
+    {
+      "WFWorkflowActionIdentifier": "is.workflow.actions.notification",
+      "WFWorkflowActionParameters": {
+        "WFNotificationActionBody": "❌ 解析失败或没有对应媒体"
+      }
+    },
+    {
+      "WFWorkflowActionIdentifier": "is.workflow.actions.conditional",
+      "WFWorkflowActionParameters": {
+        "WFControlFlowMode": 2,
+        "GroupingIdentifier": "3F6B8CAA-EED9-46E0-9781-F4A01F37C513"
+      }
+    },
+    {
+      "WFWorkflowActionIdentifier": "is.workflow.actions.conditional",
+      "WFWorkflowActionParameters": {
+        "WFControlFlowMode": 2,
+        "GroupingIdentifier": "A6709414-52B3-4F5E-A35E-B312A1846BD7"
+      }
+    },
+    {
+      "WFWorkflowActionIdentifier": "is.workflow.actions.choosefrommenu",
+      "WFWorkflowActionParameters": {
+        "WFMenuItemTitle": "图片",
+        "GroupingIdentifier": "39BD431B-DE1B-4949-B720-CCE0CFD73389",
+        "WFControlFlowMode": 1
+      }
+    },
+    {
+      "WFWorkflowActionIdentifier": "is.workflow.actions.downloadurl",
+      "WFWorkflowActionParameters": {
+        "UUID": "1676F93F-E91A-4F1E-A328-EC87108D535F",
+        "ShowHeaders": true,
+        "WFURL": "https://dwnld.nichind.dev/",
+        "WFHTTPMethod": "POST",
+        "WFHTTPBodyType": "JSON",
+        "WFJSONValues": {
+          "Value": {
+            "WFDictionaryFieldValueItems": [
+              {
+                "WFKey": {
+                  "Value": {
+                    "string": "url"
+                  },
+                  "WFSerializationType": "WFTextTokenString"
+                },
+                "WFItemType": 0,
+                "WFValue": {
+                  "Value": {
+                    "string": "￼",
+                    "attachmentsByRange": {
+                      "{0, 1}": {
+                        "VariableName": "inputURL",
+                        "Type": "Variable"
+                      }
+                    }
+                  },
+                  "WFSerializationType": "WFTextTokenString"
+                }
+              }
+            ]
+          },
+          "WFSerializationType": "WFDictionaryFieldValue"
+        },
+        "WFHTTPHeaders": {
+          "Value": {
+            "WFDictionaryFieldValueItems": [
+              {
+                "WFKey": {
+                  "Value": {
+                    "string": "Accept"
+                  },
+                  "WFSerializationType": "WFTextTokenString"
+                },
+                "WFItemType": 0,
+                "WFValue": {
+                  "Value": {
+                    "string": "application/json"
+                  },
+                  "WFSerializationType": "WFTextTokenString"
+                }
+              },
+              {
+                "WFKey": {
+                  "Value": {
+                    "string": "Content-Type"
+                  },
+                  "WFSerializationType": "WFTextTokenString"
+                },
+                "WFItemType": 0,
+                "WFValue": {
+                  "Value": {
+                    "string": "application/json"
+                  },
+                  "WFSerializationType": "WFTextTokenString"
+                }
+              }
+            ]
+          },
+          "WFSerializationType": "WFDictionaryFieldValue"
+        }
+      }
+    },
+    {
+      "WFWorkflowActionIdentifier": "is.workflow.actions.getvalueforkey",
+      "WFWorkflowActionParameters": {
+        "WFInput": {
+          "Value": {
+            "OutputUUID": "1676F93F-E91A-4F1E-A328-EC87108D535F",
+            "Type": "ActionOutput",
+            "OutputName": "URL的内容"
+          },
+          "WFSerializationType": "WFTextTokenAttachment"
+        },
+        "UUID": "1A54C303-B6EA-4698-88DF-4F03681F4BBA",
+        "WFDictionaryKey": "status"
+      }
+    },
+    {
+      "WFWorkflowActionIdentifier": "is.workflow.actions.conditional",
+      "WFWorkflowActionParameters": {
+        "WFInput": {
+          "Type": "Variable",
+          "Variable": {
+            "Value": {
+              "OutputUUID": "1A54C303-B6EA-4698-88DF-4F03681F4BBA",
+              "Type": "ActionOutput",
+              "OutputName": "词典值",
+              "Aggrandizements": [
+                {
+                  "Type": "WFCoercionVariableAggrandizement",
+                  "CoercionItemClass": "WFStringContentItem"
+                }
+              ]
+            },
+            "WFSerializationType": "WFTextTokenAttachment"
+          }
+        },
+        "WFControlFlowMode": 0,
+        "WFCondition": 4,
+        "WFConditionalActionString": "picker",
+        "GroupingIdentifier": "C624C01C-DF4A-40BC-92BC-16B0C2225E8A"
+      }
+    },
+    {
+      "WFWorkflowActionIdentifier": "is.workflow.actions.getvalueforkey",
+      "WFWorkflowActionParameters": {
+        "WFInput": {
+          "Value": {
+            "OutputUUID": "1676F93F-E91A-4F1E-A328-EC87108D535F",
+            "Type": "ActionOutput",
+            "OutputName": "URL的内容"
+          },
+          "WFSerializationType": "WFTextTokenAttachment"
+        },
+        "UUID": "8DF6456A-2E83-4AF0-B46E-14EF24CBAAD7",
+        "WFDictionaryKey": "picker"
+      }
+    },
+    {
+      "WFWorkflowActionIdentifier": "is.workflow.actions.conditional",
+      "WFWorkflowActionParameters": {
+        "WFInput": {
+          "Type": "Variable",
+          "Variable": {
+            "Value": {
+              "OutputUUID": "8DF6456A-2E83-4AF0-B46E-14EF24CBAAD7",
+              "Type": "ActionOutput",
+              "OutputName": "词典值",
+              "Aggrandizements": [
+                {
+                  "Type": "WFCoercionVariableAggrandizement",
+                  "CoercionItemClass": "WFStringContentItem"
+                }
+              ]
+            },
+            "WFSerializationType": "WFTextTokenAttachment"
+          }
+        },
+        "WFControlFlowMode": 0,
+        "WFCondition": 100,
+        "GroupingIdentifier": "314B3D9F-4990-4CE9-A2D4-C71BF068EF43"
+      }
+    },
+    {
+      "WFWorkflowActionIdentifier": "is.workflow.actions.repeat.each",
+      "WFWorkflowActionParameters": {
+        "WFInput": {
+          "Value": {
+            "OutputUUID": "8DF6456A-2E83-4AF0-B46E-14EF24CBAAD7",
+            "Type": "ActionOutput",
+            "OutputName": "词典值"
+          },
+          "WFSerializationType": "WFTextTokenAttachment"
+        },
+        "GroupingIdentifier": "053EAA95-B976-489B-8091-898004434F30",
+        "WFControlFlowMode": 0,
+        "UUID": "CC91CD14-5142-4F26-AA3D-0F6FD623ABB9"
+      }
+    },
+    {
+      "WFWorkflowActionIdentifier": "is.workflow.actions.getvalueforkey",
+      "WFWorkflowActionParameters": {
+        "WFInput": {
+          "Value": {
+            "Type": "Variable",
+            "VariableName": "重复项目"
+          },
+          "WFSerializationType": "WFTextTokenAttachment"
+        },
+        "UUID": "1E01A4EF-D02F-4DAF-9745-4647717AF6F5",
+        "WFDictionaryKey": "type"
+      }
+    },
+    {
+      "WFWorkflowActionIdentifier": "is.workflow.actions.getvalueforkey",
+      "WFWorkflowActionParameters": {
+        "WFInput": {
+          "Value": {
+            "Type": "Variable",
+            "VariableName": "重复项目"
+          },
+          "WFSerializationType": "WFTextTokenAttachment"
+        },
+        "UUID": "688F5246-7D62-4238-B88F-25F771985CB8",
+        "WFDictionaryKey": "url"
+      }
+    },
+    {
+      "WFWorkflowActionIdentifier": "is.workflow.actions.conditional",
+      "WFWorkflowActionParameters": {
+        "WFInput": {
+          "Type": "Variable",
+          "Variable": {
+            "Value": {
+              "OutputUUID": "1E01A4EF-D02F-4DAF-9745-4647717AF6F5",
+              "Type": "ActionOutput",
+              "OutputName": "词典值",
+              "Aggrandizements": [
+                {
+                  "Type": "WFCoercionVariableAggrandizement",
+                  "CoercionItemClass": "WFStringContentItem"
+                }
+              ]
+            },
+            "WFSerializationType": "WFTextTokenAttachment"
+          }
+        },
+        "WFControlFlowMode": 0,
+        "WFCondition": 4,
+        "WFConditionalActionString": "photo",
+        "GroupingIdentifier": "71400E28-A250-4E44-A743-E268961F87FB"
+      }
+    },
+    {
+      "WFWorkflowActionIdentifier": "is.workflow.actions.downloadurl",
+      "WFWorkflowActionParameters": {
+        "ShowHeaders": false,
+        "UUID": "1C39A691-21B0-4D7F-ACA0-7DD167C2D7C4",
+        "WFURL": {
+          "Value": {
+            "string": "￼",
+            "attachmentsByRange": {
+              "{0, 1}": {
+                "OutputUUID": "688F5246-7D62-4238-B88F-25F771985CB8",
+                "Type": "ActionOutput",
+                "OutputName": "词典值"
+              }
+            }
+          },
+          "WFSerializationType": "WFTextTokenString"
+        }
+      }
+    },
+    {
+      "WFWorkflowActionIdentifier": "is.workflow.actions.savetocameraroll",
+      "WFWorkflowActionParameters": {
+        "WFInput": {
+          "Value": {
+            "OutputUUID": "1C39A691-21B0-4D7F-ACA0-7DD167C2D7C4",
+            "Type": "ActionOutput",
+            "OutputName": "URL的内容"
+          },
+          "WFSerializationType": "WFTextTokenAttachment"
+        },
+        "UUID": "EEEA1CA7-28E4-432F-A89E-49F9B589AE55"
+      }
+    },
+    {
+      "WFWorkflowActionIdentifier": "is.workflow.actions.conditional",
+      "WFWorkflowActionParameters": {
+        "WFControlFlowMode": 2,
+        "GroupingIdentifier": "71400E28-A250-4E44-A743-E268961F87FB"
+      }
+    },
+    {
+      "WFWorkflowActionIdentifier": "is.workflow.actions.repeat.each",
+      "WFWorkflowActionParameters": {
+        "GroupingIdentifier": "053EAA95-B976-489B-8091-898004434F30",
+        "WFControlFlowMode": 2
+      }
+    },
+    {
+      "WFWorkflowActionIdentifier": "is.workflow.actions.notification",
+      "WFWorkflowActionParameters": {
+        "WFNotificationActionBody": "✅ 图片已保存"
+      }
+    },
+    {
+      "WFWorkflowActionIdentifier": "is.workflow.actions.conditional",
+      "WFWorkflowActionParameters": {
+        "WFControlFlowMode": 1,
+        "GroupingIdentifier": "314B3D9F-4990-4CE9-A2D4-C71BF068EF43"
+      }
+    },
+    {
+      "WFWorkflowActionIdentifier": "is.workflow.actions.notification",
+      "WFWorkflowActionParameters": {
+        "WFNotificationActionBody": "❌ 解析失败或没有对应媒体"
+      }
+    },
+    {
+      "WFWorkflowActionIdentifier": "is.workflow.actions.conditional",
+      "WFWorkflowActionParameters": {
+        "WFControlFlowMode": 2,
+        "GroupingIdentifier": "314B3D9F-4990-4CE9-A2D4-C71BF068EF43"
+      }
+    },
+    {
+      "WFWorkflowActionIdentifier": "is.workflow.actions.conditional",
+      "WFWorkflowActionParameters": {
+        "WFControlFlowMode": 1,
+        "GroupingIdentifier": "C624C01C-DF4A-40BC-92BC-16B0C2225E8A"
+      }
+    },
+    {
+      "WFWorkflowActionIdentifier": "is.workflow.actions.getvalueforkey",
+      "WFWorkflowActionParameters": {
+        "WFInput": {
+          "Value": {
+            "OutputUUID": "1676F93F-E91A-4F1E-A328-EC87108D535F",
+            "Type": "ActionOutput",
+            "OutputName": "URL的内容"
+          },
+          "WFSerializationType": "WFTextTokenAttachment"
+        },
+        "UUID": "FB32252C-6C1E-4DE1-A909-7B55728D2B1B",
+        "WFDictionaryKey": "url"
+      }
+    },
+    {
+      "WFWorkflowActionIdentifier": "is.workflow.actions.conditional",
+      "WFWorkflowActionParameters": {
+        "WFInput": {
+          "Type": "Variable",
+          "Variable": {
+            "Value": {
+              "OutputUUID": "FB32252C-6C1E-4DE1-A909-7B55728D2B1B",
+              "Type": "ActionOutput",
+              "OutputName": "词典值",
+              "Aggrandizements": [
+                {
+                  "Type": "WFCoercionVariableAggrandizement",
+                  "CoercionItemClass": "WFStringContentItem"
+                }
+              ]
+            },
+            "WFSerializationType": "WFTextTokenAttachment"
+          }
+        },
+        "WFControlFlowMode": 0,
+        "WFCondition": 100,
+        "GroupingIdentifier": "78327609-40CF-4D10-ACD8-589A73CB11A5"
+      }
+    },
+    {
+      "WFWorkflowActionIdentifier": "is.workflow.actions.downloadurl",
+      "WFWorkflowActionParameters": {
+        "ShowHeaders": false,
+        "UUID": "E26F5B00-F66C-477A-A1AA-C5264E8401FB",
+        "WFURL": {
+          "Value": {
+            "string": "￼",
+            "attachmentsByRange": {
+              "{0, 1}": {
+                "OutputUUID": "FB32252C-6C1E-4DE1-A909-7B55728D2B1B",
+                "Type": "ActionOutput",
+                "OutputName": "词典值"
+              }
+            }
+          },
+          "WFSerializationType": "WFTextTokenString"
+        }
+      }
+    },
+    {
+      "WFWorkflowActionIdentifier": "is.workflow.actions.savetocameraroll",
+      "WFWorkflowActionParameters": {
+        "WFInput": {
+          "Value": {
+            "OutputUUID": "E26F5B00-F66C-477A-A1AA-C5264E8401FB",
+            "Type": "ActionOutput",
+            "OutputName": "URL的内容"
+          },
+          "WFSerializationType": "WFTextTokenAttachment"
+        },
+        "UUID": "2634B4DA-0483-49D5-A14D-85CD48F32069"
+      }
+    },
+    {
+      "WFWorkflowActionIdentifier": "is.workflow.actions.notification",
+      "WFWorkflowActionParameters": {
+        "WFNotificationActionBody": "✅ 图片已保存"
+      }
+    },
+    {
+      "WFWorkflowActionIdentifier": "is.workflow.actions.conditional",
+      "WFWorkflowActionParameters": {
+        "WFControlFlowMode": 1,
+        "GroupingIdentifier": "78327609-40CF-4D10-ACD8-589A73CB11A5"
+      }
+    },
+    {
+      "WFWorkflowActionIdentifier": "is.workflow.actions.notification",
+      "WFWorkflowActionParameters": {
+        "WFNotificationActionBody": "❌ 解析失败或没有对应媒体"
+      }
+    },
+    {
+      "WFWorkflowActionIdentifier": "is.workflow.actions.conditional",
+      "WFWorkflowActionParameters": {
+        "WFControlFlowMode": 2,
+        "GroupingIdentifier": "78327609-40CF-4D10-ACD8-589A73CB11A5"
+      }
+    },
+    {
+      "WFWorkflowActionIdentifier": "is.workflow.actions.conditional",
+      "WFWorkflowActionParameters": {
+        "WFControlFlowMode": 2,
+        "GroupingIdentifier": "C624C01C-DF4A-40BC-92BC-16B0C2225E8A"
+      }
+    },
+    {
+      "WFWorkflowActionIdentifier": "is.workflow.actions.choosefrommenu",
+      "WFWorkflowActionParameters": {
+        "WFMenuItemTitle": "单视频",
+        "GroupingIdentifier": "39BD431B-DE1B-4949-B720-CCE0CFD73389",
+        "WFControlFlowMode": 1
+      }
+    },
+    {
+      "WFWorkflowActionIdentifier": "is.workflow.actions.downloadurl",
+      "WFWorkflowActionParameters": {
+        "UUID": "00261F61-CDEF-4EC3-910A-C78CFF1809AA",
+        "ShowHeaders": true,
+        "WFURL": "https://dwnld.nichind.dev/",
+        "WFHTTPMethod": "POST",
+        "WFHTTPBodyType": "JSON",
+        "WFJSONValues": {
+          "Value": {
+            "WFDictionaryFieldValueItems": [
+              {
+                "WFKey": {
+                  "Value": {
+                    "string": "url"
+                  },
+                  "WFSerializationType": "WFTextTokenString"
+                },
+                "WFItemType": 0,
+                "WFValue": {
+                  "Value": {
+                    "string": "￼",
+                    "attachmentsByRange": {
+                      "{0, 1}": {
+                        "VariableName": "inputURL",
+                        "Type": "Variable"
+                      }
+                    }
+                  },
+                  "WFSerializationType": "WFTextTokenString"
+                }
+              }
+            ]
+          },
+          "WFSerializationType": "WFDictionaryFieldValue"
+        },
+        "WFHTTPHeaders": {
+          "Value": {
+            "WFDictionaryFieldValueItems": [
+              {
+                "WFKey": {
+                  "Value": {
+                    "string": "Accept"
+                  },
+                  "WFSerializationType": "WFTextTokenString"
+                },
+                "WFItemType": 0,
+                "WFValue": {
+                  "Value": {
+                    "string": "application/json"
+                  },
+                  "WFSerializationType": "WFTextTokenString"
+                }
+              },
+              {
+                "WFKey": {
+                  "Value": {
+                    "string": "Content-Type"
+                  },
+                  "WFSerializationType": "WFTextTokenString"
+                },
+                "WFItemType": 0,
+                "WFValue": {
+                  "Value": {
+                    "string": "application/json"
+                  },
+                  "WFSerializationType": "WFTextTokenString"
+                }
+              }
+            ]
+          },
+          "WFSerializationType": "WFDictionaryFieldValue"
+        }
+      }
+    },
+    {
+      "WFWorkflowActionIdentifier": "is.workflow.actions.getvalueforkey",
+      "WFWorkflowActionParameters": {
+        "WFInput": {
+          "Value": {
+            "OutputUUID": "00261F61-CDEF-4EC3-910A-C78CFF1809AA",
+            "Type": "ActionOutput",
+            "OutputName": "URL的内容"
+          },
+          "WFSerializationType": "WFTextTokenAttachment"
+        },
+        "UUID": "6D770920-1C88-47FD-99F5-7C228A4ED854",
+        "WFDictionaryKey": "status"
+      }
+    },
+    {
+      "WFWorkflowActionIdentifier": "is.workflow.actions.conditional",
+      "WFWorkflowActionParameters": {
+        "WFInput": {
+          "Type": "Variable",
+          "Variable": {
+            "Value": {
+              "OutputUUID": "6D770920-1C88-47FD-99F5-7C228A4ED854",
+              "Type": "ActionOutput",
+              "OutputName": "词典值",
+              "Aggrandizements": [
+                {
+                  "Type": "WFCoercionVariableAggrandizement",
+                  "CoercionItemClass": "WFStringContentItem"
+                }
+              ]
+            },
+            "WFSerializationType": "WFTextTokenAttachment"
+          }
+        },
+        "WFControlFlowMode": 0,
+        "WFCondition": 4,
+        "WFConditionalActionString": "picker",
+        "GroupingIdentifier": "5135250A-1A92-452E-A125-1923DD42118F"
+      }
+    },
+    {
+      "WFWorkflowActionIdentifier": "is.workflow.actions.getvalueforkey",
+      "WFWorkflowActionParameters": {
+        "WFInput": {
+          "Value": {
+            "OutputUUID": "00261F61-CDEF-4EC3-910A-C78CFF1809AA",
+            "Type": "ActionOutput",
+            "OutputName": "URL的内容"
+          },
+          "WFSerializationType": "WFTextTokenAttachment"
+        },
+        "UUID": "DBA456ED-08AE-4C8B-BA53-1DEFA7D59A0E",
+        "WFDictionaryKey": "picker"
+      }
+    },
+    {
+      "WFWorkflowActionIdentifier": "is.workflow.actions.conditional",
+      "WFWorkflowActionParameters": {
+        "WFInput": {
+          "Type": "Variable",
+          "Variable": {
+            "Value": {
+              "OutputUUID": "DBA456ED-08AE-4C8B-BA53-1DEFA7D59A0E",
+              "Type": "ActionOutput",
+              "OutputName": "词典值",
+              "Aggrandizements": [
+                {
+                  "Type": "WFCoercionVariableAggrandizement",
+                  "CoercionItemClass": "WFStringContentItem"
+                }
+              ]
+            },
+            "WFSerializationType": "WFTextTokenAttachment"
+          }
+        },
+        "WFControlFlowMode": 0,
+        "WFCondition": 100,
+        "GroupingIdentifier": "3A46A09F-B665-4193-9964-D915EE2E7611"
+      }
+    },
+    {
+      "WFWorkflowActionIdentifier": "is.workflow.actions.list",
+      "WFWorkflowActionParameters": {
+        "WFItems": [],
+        "UUID": "FB0B6812-687D-4316-B73F-7DB52AF7E678"
+      }
+    },
+    {
+      "WFWorkflowActionIdentifier": "is.workflow.actions.setvariable",
+      "WFWorkflowActionParameters": {
+        "WFInput": {
+          "Value": {
+            "OutputUUID": "FB0B6812-687D-4316-B73F-7DB52AF7E678",
+            "Type": "ActionOutput",
+            "OutputName": "列表"
+          },
+          "WFSerializationType": "WFTextTokenAttachment"
+        },
+        "WFVariableName": "videoURLs"
+      }
+    },
+    {
+      "WFWorkflowActionIdentifier": "is.workflow.actions.repeat.each",
+      "WFWorkflowActionParameters": {
+        "WFInput": {
+          "Value": {
+            "OutputUUID": "DBA456ED-08AE-4C8B-BA53-1DEFA7D59A0E",
+            "Type": "ActionOutput",
+            "OutputName": "词典值"
+          },
+          "WFSerializationType": "WFTextTokenAttachment"
+        },
+        "GroupingIdentifier": "BDEE153D-AE14-42F4-A2B0-4B7B6B9A5A55",
+        "WFControlFlowMode": 0,
+        "UUID": "167A59D1-518E-4907-9241-87943A9043D0"
+      }
+    },
+    {
+      "WFWorkflowActionIdentifier": "is.workflow.actions.getvalueforkey",
+      "WFWorkflowActionParameters": {
+        "WFInput": {
+          "Value": {
+            "Type": "Variable",
+            "VariableName": "重复项目"
+          },
+          "WFSerializationType": "WFTextTokenAttachment"
+        },
+        "UUID": "C25DDB44-5D37-47D9-8CF8-0D5E4B1A59B3",
+        "WFDictionaryKey": "type"
+      }
+    },
+    {
+      "WFWorkflowActionIdentifier": "is.workflow.actions.getvalueforkey",
+      "WFWorkflowActionParameters": {
+        "WFInput": {
+          "Value": {
+            "Type": "Variable",
+            "VariableName": "重复项目"
+          },
+          "WFSerializationType": "WFTextTokenAttachment"
+        },
+        "UUID": "026CFADC-5FCC-4470-973A-A92B147EC01B",
+        "WFDictionaryKey": "url"
+      }
+    },
+    {
+      "WFWorkflowActionIdentifier": "is.workflow.actions.conditional",
+      "WFWorkflowActionParameters": {
+        "WFInput": {
+          "Type": "Variable",
+          "Variable": {
+            "Value": {
+              "OutputUUID": "C25DDB44-5D37-47D9-8CF8-0D5E4B1A59B3",
+              "Type": "ActionOutput",
+              "OutputName": "词典值",
+              "Aggrandizements": [
+                {
+                  "Type": "WFCoercionVariableAggrandizement",
+                  "CoercionItemClass": "WFStringContentItem"
+                }
+              ]
+            },
+            "WFSerializationType": "WFTextTokenAttachment"
+          }
+        },
+        "WFControlFlowMode": 0,
+        "WFCondition": 4,
+        "WFConditionalActionString": "video",
+        "GroupingIdentifier": "D4153064-F94D-45BB-AAE3-49F8380BFA09"
+      }
+    },
+    {
+      "WFWorkflowActionIdentifier": "is.workflow.actions.appendvariable",
+      "WFWorkflowActionParameters": {
+        "WFInput": {
+          "Value": {
+            "OutputUUID": "026CFADC-5FCC-4470-973A-A92B147EC01B",
+            "Type": "ActionOutput",
+            "OutputName": "词典值"
+          },
+          "WFSerializationType": "WFTextTokenAttachment"
+        },
+        "WFVariableName": "videoURLs"
+      }
+    },
+    {
+      "WFWorkflowActionIdentifier": "is.workflow.actions.conditional",
+      "WFWorkflowActionParameters": {
+        "WFControlFlowMode": 2,
+        "GroupingIdentifier": "D4153064-F94D-45BB-AAE3-49F8380BFA09"
+      }
+    },
+    {
+      "WFWorkflowActionIdentifier": "is.workflow.actions.repeat.each",
+      "WFWorkflowActionParameters": {
+        "GroupingIdentifier": "BDEE153D-AE14-42F4-A2B0-4B7B6B9A5A55",
+        "WFControlFlowMode": 2
+      }
+    },
+    {
+      "WFWorkflowActionIdentifier": "is.workflow.actions.getitemfromlist",
+      "WFWorkflowActionParameters": {
+        "WFInput": {
+          "Value": {
+            "Type": "Variable",
+            "VariableName": "videoURLs"
+          },
+          "WFSerializationType": "WFTextTokenAttachment"
+        },
+        "WFItemSpecifier": "First Item",
+        "UUID": "B550B87B-09DA-45ED-A5FD-41F824BC68B5"
+      }
+    },
+    {
+      "WFWorkflowActionIdentifier": "is.workflow.actions.conditional",
+      "WFWorkflowActionParameters": {
+        "WFInput": {
+          "Type": "Variable",
+          "Variable": {
+            "Value": {
+              "OutputUUID": "B550B87B-09DA-45ED-A5FD-41F824BC68B5",
+              "Type": "ActionOutput",
+              "OutputName": "列表中的项目",
+              "Aggrandizements": [
+                {
+                  "Type": "WFCoercionVariableAggrandizement",
+                  "CoercionItemClass": "WFStringContentItem"
+                }
+              ]
+            },
+            "WFSerializationType": "WFTextTokenAttachment"
+          }
+        },
+        "WFControlFlowMode": 0,
+        "WFCondition": 100,
+        "GroupingIdentifier": "4D931D68-6F2F-4C77-8801-6E7A96778850"
+      }
+    },
+    {
+      "WFWorkflowActionIdentifier": "is.workflow.actions.downloadurl",
+      "WFWorkflowActionParameters": {
+        "ShowHeaders": false,
+        "UUID": "6FC91783-A6F0-467F-8A09-EB79FFA90397",
+        "WFURL": {
+          "Value": {
+            "string": "￼",
+            "attachmentsByRange": {
+              "{0, 1}": {
+                "OutputUUID": "B550B87B-09DA-45ED-A5FD-41F824BC68B5",
+                "Type": "ActionOutput",
+                "OutputName": "列表中的项目"
+              }
+            }
+          },
+          "WFSerializationType": "WFTextTokenString"
+        }
+      }
+    },
+    {
+      "WFWorkflowActionIdentifier": "is.workflow.actions.savetocameraroll",
+      "WFWorkflowActionParameters": {
+        "WFInput": {
+          "Value": {
+            "OutputUUID": "6FC91783-A6F0-467F-8A09-EB79FFA90397",
+            "Type": "ActionOutput",
+            "OutputName": "URL的内容"
+          },
+          "WFSerializationType": "WFTextTokenAttachment"
+        },
+        "UUID": "7E285B8E-CB6F-44A5-869F-D88250D17F03"
+      }
+    },
+    {
+      "WFWorkflowActionIdentifier": "is.workflow.actions.notification",
+      "WFWorkflowActionParameters": {
+        "WFNotificationActionBody": "✅ 单视频已保存"
+      }
+    },
+    {
+      "WFWorkflowActionIdentifier": "is.workflow.actions.conditional",
+      "WFWorkflowActionParameters": {
+        "WFControlFlowMode": 1,
+        "GroupingIdentifier": "4D931D68-6F2F-4C77-8801-6E7A96778850"
+      }
+    },
+    {
+      "WFWorkflowActionIdentifier": "is.workflow.actions.notification",
+      "WFWorkflowActionParameters": {
+        "WFNotificationActionBody": "❌ 未找到视频"
+      }
+    },
+    {
+      "WFWorkflowActionIdentifier": "is.workflow.actions.conditional",
+      "WFWorkflowActionParameters": {
+        "WFControlFlowMode": 2,
+        "GroupingIdentifier": "4D931D68-6F2F-4C77-8801-6E7A96778850"
+      }
+    },
+    {
+      "WFWorkflowActionIdentifier": "is.workflow.actions.conditional",
+      "WFWorkflowActionParameters": {
+        "WFControlFlowMode": 1,
+        "GroupingIdentifier": "3A46A09F-B665-4193-9964-D915EE2E7611"
+      }
+    },
+    {
+      "WFWorkflowActionIdentifier": "is.workflow.actions.notification",
+      "WFWorkflowActionParameters": {
+        "WFNotificationActionBody": "❌ 解析失败"
+      }
+    },
+    {
+      "WFWorkflowActionIdentifier": "is.workflow.actions.conditional",
+      "WFWorkflowActionParameters": {
+        "WFControlFlowMode": 2,
+        "GroupingIdentifier": "3A46A09F-B665-4193-9964-D915EE2E7611"
+      }
+    },
+    {
+      "WFWorkflowActionIdentifier": "is.workflow.actions.conditional",
+      "WFWorkflowActionParameters": {
+        "WFControlFlowMode": 1,
+        "GroupingIdentifier": "5135250A-1A92-452E-A125-1923DD42118F"
+      }
+    },
+    {
+      "WFWorkflowActionIdentifier": "is.workflow.actions.notification",
+      "WFWorkflowActionParameters": {
+        "WFNotificationActionBody": "❌ 解析失败"
+      }
+    },
+    {
+      "WFWorkflowActionIdentifier": "is.workflow.actions.conditional",
+      "WFWorkflowActionParameters": {
+        "WFControlFlowMode": 2,
+        "GroupingIdentifier": "5135250A-1A92-452E-A125-1923DD42118F"
+      }
+    },
+    {
+      "WFWorkflowActionIdentifier": "is.workflow.actions.choosefrommenu",
+      "WFWorkflowActionParameters": {
+        "WFMenuItemTitle": "多视频",
+        "GroupingIdentifier": "39BD431B-DE1B-4949-B720-CCE0CFD73389",
+        "WFControlFlowMode": 1
+      }
+    },
+    {
+      "WFWorkflowActionIdentifier": "is.workflow.actions.downloadurl",
+      "WFWorkflowActionParameters": {
+        "UUID": "FB72BA09-6EB8-4D7E-9F5E-9AD0CE3D19CD",
+        "ShowHeaders": true,
+        "WFURL": "https://dwnld.nichind.dev/",
+        "WFHTTPMethod": "POST",
+        "WFHTTPBodyType": "JSON",
+        "WFJSONValues": {
+          "Value": {
+            "WFDictionaryFieldValueItems": [
+              {
+                "WFKey": {
+                  "Value": {
+                    "string": "url"
+                  },
+                  "WFSerializationType": "WFTextTokenString"
+                },
+                "WFItemType": 0,
+                "WFValue": {
+                  "Value": {
+                    "string": "￼",
+                    "attachmentsByRange": {
+                      "{0, 1}": {
+                        "VariableName": "inputURL",
+                        "Type": "Variable"
+                      }
+                    }
+                  },
+                  "WFSerializationType": "WFTextTokenString"
+                }
+              }
+            ]
+          },
+          "WFSerializationType": "WFDictionaryFieldValue"
+        },
+        "WFHTTPHeaders": {
+          "Value": {
+            "WFDictionaryFieldValueItems": [
+              {
+                "WFKey": {
+                  "Value": {
+                    "string": "Accept"
+                  },
+                  "WFSerializationType": "WFTextTokenString"
+                },
+                "WFItemType": 0,
+                "WFValue": {
+                  "Value": {
+                    "string": "application/json"
+                  },
+                  "WFSerializationType": "WFTextTokenString"
+                }
+              },
+              {
+                "WFKey": {
+                  "Value": {
+                    "string": "Content-Type"
+                  },
+                  "WFSerializationType": "WFTextTokenString"
+                },
+                "WFItemType": 0,
+                "WFValue": {
+                  "Value": {
+                    "string": "application/json"
+                  },
+                  "WFSerializationType": "WFTextTokenString"
+                }
+              }
+            ]
+          },
+          "WFSerializationType": "WFDictionaryFieldValue"
+        }
+      }
+    },
+    {
+      "WFWorkflowActionIdentifier": "is.workflow.actions.getvalueforkey",
+      "WFWorkflowActionParameters": {
+        "WFInput": {
+          "Value": {
+            "OutputUUID": "FB72BA09-6EB8-4D7E-9F5E-9AD0CE3D19CD",
+            "Type": "ActionOutput",
+            "OutputName": "URL的内容"
+          },
+          "WFSerializationType": "WFTextTokenAttachment"
+        },
+        "UUID": "4C195ECD-A0AF-4388-8774-72978CECA4BE",
+        "WFDictionaryKey": "status"
+      }
+    },
+    {
+      "WFWorkflowActionIdentifier": "is.workflow.actions.conditional",
+      "WFWorkflowActionParameters": {
+        "WFInput": {
+          "Type": "Variable",
+          "Variable": {
+            "Value": {
+              "OutputUUID": "4C195ECD-A0AF-4388-8774-72978CECA4BE",
+              "Type": "ActionOutput",
+              "OutputName": "词典值",
+              "Aggrandizements": [
+                {
+                  "Type": "WFCoercionVariableAggrandizement",
+                  "CoercionItemClass": "WFStringContentItem"
+                }
+              ]
+            },
+            "WFSerializationType": "WFTextTokenAttachment"
+          }
+        },
+        "WFControlFlowMode": 0,
+        "WFCondition": 4,
+        "WFConditionalActionString": "picker",
+        "GroupingIdentifier": "4D7FD00C-DA51-497C-B9DB-1AAC2C07FAA8"
+      }
+    },
+    {
+      "WFWorkflowActionIdentifier": "is.workflow.actions.getvalueforkey",
+      "WFWorkflowActionParameters": {
+        "WFInput": {
+          "Value": {
+            "OutputUUID": "FB72BA09-6EB8-4D7E-9F5E-9AD0CE3D19CD",
+            "Type": "ActionOutput",
+            "OutputName": "URL的内容"
+          },
+          "WFSerializationType": "WFTextTokenAttachment"
+        },
+        "UUID": "CA103C5B-695A-4B00-8D48-234E52F9E63A",
+        "WFDictionaryKey": "picker"
+      }
+    },
+    {
+      "WFWorkflowActionIdentifier": "is.workflow.actions.conditional",
+      "WFWorkflowActionParameters": {
+        "WFInput": {
+          "Type": "Variable",
+          "Variable": {
+            "Value": {
+              "OutputUUID": "CA103C5B-695A-4B00-8D48-234E52F9E63A",
+              "Type": "ActionOutput",
+              "OutputName": "词典值",
+              "Aggrandizements": [
+                {
+                  "Type": "WFCoercionVariableAggrandizement",
+                  "CoercionItemClass": "WFStringContentItem"
+                }
+              ]
+            },
+            "WFSerializationType": "WFTextTokenAttachment"
+          }
+        },
+        "WFControlFlowMode": 0,
+        "WFCondition": 100,
+        "GroupingIdentifier": "F048E51F-EAF8-4D85-B07F-5FAA1C4B3684"
+      }
+    },
+    {
+      "WFWorkflowActionIdentifier": "is.workflow.actions.repeat.each",
+      "WFWorkflowActionParameters": {
+        "WFInput": {
+          "Value": {
+            "OutputUUID": "CA103C5B-695A-4B00-8D48-234E52F9E63A",
+            "Type": "ActionOutput",
+            "OutputName": "词典值"
+          },
+          "WFSerializationType": "WFTextTokenAttachment"
+        },
+        "GroupingIdentifier": "B9AC1122-156C-4E63-BF36-789BB1C8499E",
+        "WFControlFlowMode": 0,
+        "UUID": "9A6BEE3F-04E1-4585-9ECC-48979D62BFCB"
+      }
+    },
+    {
+      "WFWorkflowActionIdentifier": "is.workflow.actions.getvalueforkey",
+      "WFWorkflowActionParameters": {
+        "WFInput": {
+          "Value": {
+            "Type": "Variable",
+            "VariableName": "重复项目"
+          },
+          "WFSerializationType": "WFTextTokenAttachment"
+        },
+        "UUID": "37152F7A-B88A-48F7-8716-CD400AD12B69",
+        "WFDictionaryKey": "type"
+      }
+    },
+    {
+      "WFWorkflowActionIdentifier": "is.workflow.actions.getvalueforkey",
+      "WFWorkflowActionParameters": {
+        "WFInput": {
+          "Value": {
+            "Type": "Variable",
+            "VariableName": "重复项目"
+          },
+          "WFSerializationType": "WFTextTokenAttachment"
+        },
+        "UUID": "EB215A55-9E19-4E23-B10E-51F45B6392B5",
+        "WFDictionaryKey": "url"
+      }
+    },
+    {
+      "WFWorkflowActionIdentifier": "is.workflow.actions.conditional",
+      "WFWorkflowActionParameters": {
+        "WFInput": {
+          "Type": "Variable",
+          "Variable": {
+            "Value": {
+              "OutputUUID": "37152F7A-B88A-48F7-8716-CD400AD12B69",
+              "Type": "ActionOutput",
+              "OutputName": "词典值",
+              "Aggrandizements": [
+                {
+                  "Type": "WFCoercionVariableAggrandizement",
+                  "CoercionItemClass": "WFStringContentItem"
+                }
+              ]
+            },
+            "WFSerializationType": "WFTextTokenAttachment"
+          }
+        },
+        "WFControlFlowMode": 0,
+        "WFCondition": 4,
+        "WFConditionalActionString": "video",
+        "GroupingIdentifier": "CDD34EE4-3658-4D2C-9C7C-D7187A37F588"
+      }
+    },
+    {
+      "WFWorkflowActionIdentifier": "is.workflow.actions.downloadurl",
+      "WFWorkflowActionParameters": {
+        "ShowHeaders": false,
+        "UUID": "23AF0E8E-D2FF-412C-A911-D95BAB0F3980",
+        "WFURL": {
+          "Value": {
+            "string": "￼",
+            "attachmentsByRange": {
+              "{0, 1}": {
+                "OutputUUID": "EB215A55-9E19-4E23-B10E-51F45B6392B5",
+                "Type": "ActionOutput",
+                "OutputName": "词典值"
+              }
+            }
+          },
+          "WFSerializationType": "WFTextTokenString"
+        }
+      }
+    },
+    {
+      "WFWorkflowActionIdentifier": "is.workflow.actions.savetocameraroll",
+      "WFWorkflowActionParameters": {
+        "WFInput": {
+          "Value": {
+            "OutputUUID": "23AF0E8E-D2FF-412C-A911-D95BAB0F3980",
+            "Type": "ActionOutput",
+            "OutputName": "URL的内容"
+          },
+          "WFSerializationType": "WFTextTokenAttachment"
+        },
+        "UUID": "F45360C1-CA91-4E33-B543-82E0DABA0F52"
+      }
+    },
+    {
+      "WFWorkflowActionIdentifier": "is.workflow.actions.conditional",
+      "WFWorkflowActionParameters": {
+        "WFControlFlowMode": 2,
+        "GroupingIdentifier": "CDD34EE4-3658-4D2C-9C7C-D7187A37F588"
+      }
+    },
+    {
+      "WFWorkflowActionIdentifier": "is.workflow.actions.repeat.each",
+      "WFWorkflowActionParameters": {
+        "GroupingIdentifier": "B9AC1122-156C-4E63-BF36-789BB1C8499E",
+        "WFControlFlowMode": 2
+      }
+    },
+    {
+      "WFWorkflowActionIdentifier": "is.workflow.actions.notification",
+      "WFWorkflowActionParameters": {
+        "WFNotificationActionBody": "✅ 视频已保存"
+      }
+    },
+    {
+      "WFWorkflowActionIdentifier": "is.workflow.actions.conditional",
+      "WFWorkflowActionParameters": {
+        "WFControlFlowMode": 1,
+        "GroupingIdentifier": "F048E51F-EAF8-4D85-B07F-5FAA1C4B3684"
+      }
+    },
+    {
+      "WFWorkflowActionIdentifier": "is.workflow.actions.notification",
+      "WFWorkflowActionParameters": {
+        "WFNotificationActionBody": "❌ 解析失败或没有对应媒体"
+      }
+    },
+    {
+      "WFWorkflowActionIdentifier": "is.workflow.actions.conditional",
+      "WFWorkflowActionParameters": {
+        "WFControlFlowMode": 2,
+        "GroupingIdentifier": "F048E51F-EAF8-4D85-B07F-5FAA1C4B3684"
+      }
+    },
+    {
+      "WFWorkflowActionIdentifier": "is.workflow.actions.conditional",
+      "WFWorkflowActionParameters": {
+        "WFControlFlowMode": 1,
+        "GroupingIdentifier": "4D7FD00C-DA51-497C-B9DB-1AAC2C07FAA8"
+      }
+    },
+    {
+      "WFWorkflowActionIdentifier": "is.workflow.actions.getvalueforkey",
+      "WFWorkflowActionParameters": {
+        "WFInput": {
+          "Value": {
+            "OutputUUID": "FB72BA09-6EB8-4D7E-9F5E-9AD0CE3D19CD",
+            "Type": "ActionOutput",
+            "OutputName": "URL的内容"
+          },
+          "WFSerializationType": "WFTextTokenAttachment"
+        },
+        "UUID": "F8749A35-EF0E-4038-BAA3-4B9769B4E35C",
+        "WFDictionaryKey": "url"
+      }
+    },
+    {
+      "WFWorkflowActionIdentifier": "is.workflow.actions.conditional",
+      "WFWorkflowActionParameters": {
+        "WFInput": {
+          "Type": "Variable",
+          "Variable": {
+            "Value": {
+              "OutputUUID": "F8749A35-EF0E-4038-BAA3-4B9769B4E35C",
+              "Type": "ActionOutput",
+              "OutputName": "词典值",
+              "Aggrandizements": [
+                {
+                  "Type": "WFCoercionVariableAggrandizement",
+                  "CoercionItemClass": "WFStringContentItem"
+                }
+              ]
+            },
+            "WFSerializationType": "WFTextTokenAttachment"
+          }
+        },
+        "WFControlFlowMode": 0,
+        "WFCondition": 100,
+        "GroupingIdentifier": "66E4D16B-0FD9-4761-8A9E-71271473EADB"
+      }
+    },
+    {
+      "WFWorkflowActionIdentifier": "is.workflow.actions.downloadurl",
+      "WFWorkflowActionParameters": {
+        "ShowHeaders": false,
+        "UUID": "61514B85-4BAC-48BC-85CC-66BA315DCDB3",
+        "WFURL": {
+          "Value": {
+            "string": "￼",
+            "attachmentsByRange": {
+              "{0, 1}": {
+                "OutputUUID": "F8749A35-EF0E-4038-BAA3-4B9769B4E35C",
+                "Type": "ActionOutput",
+                "OutputName": "词典值"
+              }
+            }
+          },
+          "WFSerializationType": "WFTextTokenString"
+        }
+      }
+    },
+    {
+      "WFWorkflowActionIdentifier": "is.workflow.actions.savetocameraroll",
+      "WFWorkflowActionParameters": {
+        "WFInput": {
+          "Value": {
+            "OutputUUID": "61514B85-4BAC-48BC-85CC-66BA315DCDB3",
+            "Type": "ActionOutput",
+            "OutputName": "URL的内容"
+          },
+          "WFSerializationType": "WFTextTokenAttachment"
+        },
+        "UUID": "42622CC0-46BC-4BAA-ACD5-9B1525FB2E35"
+      }
+    },
+    {
+      "WFWorkflowActionIdentifier": "is.workflow.actions.notification",
+      "WFWorkflowActionParameters": {
+        "WFNotificationActionBody": "✅ 视频已保存"
+      }
+    },
+    {
+      "WFWorkflowActionIdentifier": "is.workflow.actions.conditional",
+      "WFWorkflowActionParameters": {
+        "WFControlFlowMode": 1,
+        "GroupingIdentifier": "66E4D16B-0FD9-4761-8A9E-71271473EADB"
+      }
+    },
+    {
+      "WFWorkflowActionIdentifier": "is.workflow.actions.notification",
+      "WFWorkflowActionParameters": {
+        "WFNotificationActionBody": "❌ 解析失败或没有对应媒体"
+      }
+    },
+    {
+      "WFWorkflowActionIdentifier": "is.workflow.actions.conditional",
+      "WFWorkflowActionParameters": {
+        "WFControlFlowMode": 2,
+        "GroupingIdentifier": "66E4D16B-0FD9-4761-8A9E-71271473EADB"
+      }
+    },
+    {
+      "WFWorkflowActionIdentifier": "is.workflow.actions.conditional",
+      "WFWorkflowActionParameters": {
+        "WFControlFlowMode": 2,
+        "GroupingIdentifier": "4D7FD00C-DA51-497C-B9DB-1AAC2C07FAA8"
+      }
+    },
+    {
+      "WFWorkflowActionIdentifier": "is.workflow.actions.choosefrommenu",
+      "WFWorkflowActionParameters": {
+        "WFMenuItemTitle": "GIF",
+        "GroupingIdentifier": "39BD431B-DE1B-4949-B720-CCE0CFD73389",
+        "WFControlFlowMode": 1
+      }
+    },
+    {
+      "WFWorkflowActionIdentifier": "is.workflow.actions.downloadurl",
+      "WFWorkflowActionParameters": {
+        "UUID": "34C9E756-7BBE-4366-9302-0F387ECF025F",
+        "ShowHeaders": true,
+        "WFURL": "https://dwnld.nichind.dev/",
+        "WFHTTPMethod": "POST",
+        "WFHTTPBodyType": "JSON",
+        "WFJSONValues": {
+          "Value": {
+            "WFDictionaryFieldValueItems": [
+              {
+                "WFKey": {
+                  "Value": {
+                    "string": "url"
+                  },
+                  "WFSerializationType": "WFTextTokenString"
+                },
+                "WFItemType": 0,
+                "WFValue": {
+                  "Value": {
+                    "string": "￼",
+                    "attachmentsByRange": {
+                      "{0, 1}": {
+                        "VariableName": "inputURL",
+                        "Type": "Variable"
+                      }
+                    }
+                  },
+                  "WFSerializationType": "WFTextTokenString"
+                }
+              }
+            ]
+          },
+          "WFSerializationType": "WFDictionaryFieldValue"
+        },
+        "WFHTTPHeaders": {
+          "Value": {
+            "WFDictionaryFieldValueItems": [
+              {
+                "WFKey": {
+                  "Value": {
+                    "string": "Accept"
+                  },
+                  "WFSerializationType": "WFTextTokenString"
+                },
+                "WFItemType": 0,
+                "WFValue": {
+                  "Value": {
+                    "string": "application/json"
+                  },
+                  "WFSerializationType": "WFTextTokenString"
+                }
+              },
+              {
+                "WFKey": {
+                  "Value": {
+                    "string": "Content-Type"
+                  },
+                  "WFSerializationType": "WFTextTokenString"
+                },
+                "WFItemType": 0,
+                "WFValue": {
+                  "Value": {
+                    "string": "application/json"
+                  },
+                  "WFSerializationType": "WFTextTokenString"
+                }
+              }
+            ]
+          },
+          "WFSerializationType": "WFDictionaryFieldValue"
+        }
+      }
+    },
+    {
+      "WFWorkflowActionIdentifier": "is.workflow.actions.getvalueforkey",
+      "WFWorkflowActionParameters": {
+        "WFInput": {
+          "Value": {
+            "OutputUUID": "34C9E756-7BBE-4366-9302-0F387ECF025F",
+            "Type": "ActionOutput",
+            "OutputName": "URL的内容"
+          },
+          "WFSerializationType": "WFTextTokenAttachment"
+        },
+        "UUID": "CBCF261D-5B78-4F10-9F1E-372B84231DEA",
+        "WFDictionaryKey": "status"
+      }
+    },
+    {
+      "WFWorkflowActionIdentifier": "is.workflow.actions.conditional",
+      "WFWorkflowActionParameters": {
+        "WFInput": {
+          "Type": "Variable",
+          "Variable": {
+            "Value": {
+              "OutputUUID": "CBCF261D-5B78-4F10-9F1E-372B84231DEA",
+              "Type": "ActionOutput",
+              "OutputName": "词典值",
+              "Aggrandizements": [
+                {
+                  "Type": "WFCoercionVariableAggrandizement",
+                  "CoercionItemClass": "WFStringContentItem"
+                }
+              ]
+            },
+            "WFSerializationType": "WFTextTokenAttachment"
+          }
+        },
+        "WFControlFlowMode": 0,
+        "WFCondition": 4,
+        "WFConditionalActionString": "picker",
+        "GroupingIdentifier": "06E4F865-15B1-4CA1-B3A9-0E81FE34A5AF"
+      }
+    },
+    {
+      "WFWorkflowActionIdentifier": "is.workflow.actions.getvalueforkey",
+      "WFWorkflowActionParameters": {
+        "WFInput": {
+          "Value": {
+            "OutputUUID": "34C9E756-7BBE-4366-9302-0F387ECF025F",
+            "Type": "ActionOutput",
+            "OutputName": "URL的内容"
+          },
+          "WFSerializationType": "WFTextTokenAttachment"
+        },
+        "UUID": "5F8A1612-1348-435E-BD44-CA1665145436",
+        "WFDictionaryKey": "picker"
+      }
+    },
+    {
+      "WFWorkflowActionIdentifier": "is.workflow.actions.conditional",
+      "WFWorkflowActionParameters": {
+        "WFInput": {
+          "Type": "Variable",
+          "Variable": {
+            "Value": {
+              "OutputUUID": "5F8A1612-1348-435E-BD44-CA1665145436",
+              "Type": "ActionOutput",
+              "OutputName": "词典值",
+              "Aggrandizements": [
+                {
+                  "Type": "WFCoercionVariableAggrandizement",
+                  "CoercionItemClass": "WFStringContentItem"
+                }
+              ]
+            },
+            "WFSerializationType": "WFTextTokenAttachment"
+          }
+        },
+        "WFControlFlowMode": 0,
+        "WFCondition": 100,
+        "GroupingIdentifier": "2B1D6783-54C0-45A1-806D-F3F004B840E4"
+      }
+    },
+    {
+      "WFWorkflowActionIdentifier": "is.workflow.actions.repeat.each",
+      "WFWorkflowActionParameters": {
+        "WFInput": {
+          "Value": {
+            "OutputUUID": "5F8A1612-1348-435E-BD44-CA1665145436",
+            "Type": "ActionOutput",
+            "OutputName": "词典值"
+          },
+          "WFSerializationType": "WFTextTokenAttachment"
+        },
+        "GroupingIdentifier": "0D73E00B-CD2B-4392-823F-B30846A767DE",
+        "WFControlFlowMode": 0,
+        "UUID": "48E80E54-A162-44EE-B58C-D570041E8856"
+      }
+    },
+    {
+      "WFWorkflowActionIdentifier": "is.workflow.actions.getvalueforkey",
+      "WFWorkflowActionParameters": {
+        "WFInput": {
+          "Value": {
+            "Type": "Variable",
+            "VariableName": "重复项目"
+          },
+          "WFSerializationType": "WFTextTokenAttachment"
+        },
+        "UUID": "923EBEA6-577A-47D9-8B45-AC3E04D238D5",
+        "WFDictionaryKey": "type"
+      }
+    },
+    {
+      "WFWorkflowActionIdentifier": "is.workflow.actions.getvalueforkey",
+      "WFWorkflowActionParameters": {
+        "WFInput": {
+          "Value": {
+            "Type": "Variable",
+            "VariableName": "重复项目"
+          },
+          "WFSerializationType": "WFTextTokenAttachment"
+        },
+        "UUID": "15153D9A-C664-4A45-96DF-34B29CB31643",
+        "WFDictionaryKey": "url"
+      }
+    },
+    {
+      "WFWorkflowActionIdentifier": "is.workflow.actions.conditional",
+      "WFWorkflowActionParameters": {
+        "WFInput": {
+          "Type": "Variable",
+          "Variable": {
+            "Value": {
+              "OutputUUID": "923EBEA6-577A-47D9-8B45-AC3E04D238D5",
+              "Type": "ActionOutput",
+              "OutputName": "词典值",
+              "Aggrandizements": [
+                {
+                  "Type": "WFCoercionVariableAggrandizement",
+                  "CoercionItemClass": "WFStringContentItem"
+                }
+              ]
+            },
+            "WFSerializationType": "WFTextTokenAttachment"
+          }
+        },
+        "WFControlFlowMode": 0,
+        "WFCondition": 4,
+        "WFConditionalActionString": "gif",
+        "GroupingIdentifier": "FCF6B99D-5347-49DA-BB12-B1F363002CFB"
+      }
+    },
+    {
+      "WFWorkflowActionIdentifier": "is.workflow.actions.downloadurl",
+      "WFWorkflowActionParameters": {
+        "ShowHeaders": false,
+        "UUID": "D2B363C4-4EC1-408F-A740-79CB9A9A23DE",
+        "WFURL": {
+          "Value": {
+            "string": "￼",
+            "attachmentsByRange": {
+              "{0, 1}": {
+                "OutputUUID": "15153D9A-C664-4A45-96DF-34B29CB31643",
+                "Type": "ActionOutput",
+                "OutputName": "词典值"
+              }
+            }
+          },
+          "WFSerializationType": "WFTextTokenString"
+        }
+      }
+    },
+    {
+      "WFWorkflowActionIdentifier": "is.workflow.actions.savetocameraroll",
+      "WFWorkflowActionParameters": {
+        "WFInput": {
+          "Value": {
+            "OutputUUID": "D2B363C4-4EC1-408F-A740-79CB9A9A23DE",
+            "Type": "ActionOutput",
+            "OutputName": "URL的内容"
+          },
+          "WFSerializationType": "WFTextTokenAttachment"
+        },
+        "UUID": "07CDF037-4ADE-4033-9159-C31B9489F8C7"
+      }
+    },
+    {
+      "WFWorkflowActionIdentifier": "is.workflow.actions.conditional",
+      "WFWorkflowActionParameters": {
+        "WFControlFlowMode": 2,
+        "GroupingIdentifier": "FCF6B99D-5347-49DA-BB12-B1F363002CFB"
+      }
+    },
+    {
+      "WFWorkflowActionIdentifier": "is.workflow.actions.repeat.each",
+      "WFWorkflowActionParameters": {
+        "GroupingIdentifier": "0D73E00B-CD2B-4392-823F-B30846A767DE",
+        "WFControlFlowMode": 2
+      }
+    },
+    {
+      "WFWorkflowActionIdentifier": "is.workflow.actions.notification",
+      "WFWorkflowActionParameters": {
+        "WFNotificationActionBody": "✅ GIF 已保存"
+      }
+    },
+    {
+      "WFWorkflowActionIdentifier": "is.workflow.actions.conditional",
+      "WFWorkflowActionParameters": {
+        "WFControlFlowMode": 1,
+        "GroupingIdentifier": "2B1D6783-54C0-45A1-806D-F3F004B840E4"
+      }
+    },
+    {
+      "WFWorkflowActionIdentifier": "is.workflow.actions.notification",
+      "WFWorkflowActionParameters": {
+        "WFNotificationActionBody": "❌ 未识别到 GIF（若为 mp4 动图请用「单视频」）"
+      }
+    },
+    {
+      "WFWorkflowActionIdentifier": "is.workflow.actions.conditional",
+      "WFWorkflowActionParameters": {
+        "WFControlFlowMode": 2,
+        "GroupingIdentifier": "2B1D6783-54C0-45A1-806D-F3F004B840E4"
+      }
+    },
+    {
+      "WFWorkflowActionIdentifier": "is.workflow.actions.conditional",
+      "WFWorkflowActionParameters": {
+        "WFControlFlowMode": 1,
+        "GroupingIdentifier": "06E4F865-15B1-4CA1-B3A9-0E81FE34A5AF"
+      }
+    },
+    {
+      "WFWorkflowActionIdentifier": "is.workflow.actions.getvalueforkey",
+      "WFWorkflowActionParameters": {
+        "WFInput": {
+          "Value": {
+            "OutputUUID": "34C9E756-7BBE-4366-9302-0F387ECF025F",
+            "Type": "ActionOutput",
+            "OutputName": "URL的内容"
+          },
+          "WFSerializationType": "WFTextTokenAttachment"
+        },
+        "UUID": "601B5BBE-C07B-4ECF-BBC0-1523F6E6127F",
+        "WFDictionaryKey": "url"
+      }
+    },
+    {
+      "WFWorkflowActionIdentifier": "is.workflow.actions.conditional",
+      "WFWorkflowActionParameters": {
+        "WFInput": {
+          "Type": "Variable",
+          "Variable": {
+            "Value": {
+              "OutputUUID": "601B5BBE-C07B-4ECF-BBC0-1523F6E6127F",
+              "Type": "ActionOutput",
+              "OutputName": "词典值",
+              "Aggrandizements": [
+                {
+                  "Type": "WFCoercionVariableAggrandizement",
+                  "CoercionItemClass": "WFStringContentItem"
+                }
+              ]
+            },
+            "WFSerializationType": "WFTextTokenAttachment"
+          }
+        },
+        "WFControlFlowMode": 0,
+        "WFCondition": 100,
+        "GroupingIdentifier": "3A0F135A-18C6-43F2-87E2-858865779863"
+      }
+    },
+    {
+      "WFWorkflowActionIdentifier": "is.workflow.actions.downloadurl",
+      "WFWorkflowActionParameters": {
+        "ShowHeaders": false,
+        "UUID": "93950965-F5E3-4114-AE89-C27DA61256CE",
+        "WFURL": {
+          "Value": {
+            "string": "￼",
+            "attachmentsByRange": {
+              "{0, 1}": {
+                "OutputUUID": "601B5BBE-C07B-4ECF-BBC0-1523F6E6127F",
+                "Type": "ActionOutput",
+                "OutputName": "词典值"
+              }
+            }
+          },
+          "WFSerializationType": "WFTextTokenString"
+        }
+      }
+    },
+    {
+      "WFWorkflowActionIdentifier": "is.workflow.actions.savetocameraroll",
+      "WFWorkflowActionParameters": {
+        "WFInput": {
+          "Value": {
+            "OutputUUID": "93950965-F5E3-4114-AE89-C27DA61256CE",
+            "Type": "ActionOutput",
+            "OutputName": "URL的内容"
+          },
+          "WFSerializationType": "WFTextTokenAttachment"
+        },
+        "UUID": "3BFFD2C5-AC70-4331-97B2-5347AA320D24"
+      }
+    },
+    {
+      "WFWorkflowActionIdentifier": "is.workflow.actions.notification",
+      "WFWorkflowActionParameters": {
+        "WFNotificationActionBody": "✅ GIF 已保存"
+      }
+    },
+    {
+      "WFWorkflowActionIdentifier": "is.workflow.actions.conditional",
+      "WFWorkflowActionParameters": {
+        "WFControlFlowMode": 1,
+        "GroupingIdentifier": "3A0F135A-18C6-43F2-87E2-858865779863"
+      }
+    },
+    {
+      "WFWorkflowActionIdentifier": "is.workflow.actions.notification",
+      "WFWorkflowActionParameters": {
+        "WFNotificationActionBody": "❌ 未识别到 GIF（若为 mp4 动图请用「单视频」）"
+      }
+    },
+    {
+      "WFWorkflowActionIdentifier": "is.workflow.actions.conditional",
+      "WFWorkflowActionParameters": {
+        "WFControlFlowMode": 2,
+        "GroupingIdentifier": "3A0F135A-18C6-43F2-87E2-858865779863"
+      }
+    },
+    {
+      "WFWorkflowActionIdentifier": "is.workflow.actions.conditional",
+      "WFWorkflowActionParameters": {
+        "WFControlFlowMode": 2,
+        "GroupingIdentifier": "06E4F865-15B1-4CA1-B3A9-0E81FE34A5AF"
+      }
+    },
+    {
+      "WFWorkflowActionIdentifier": "is.workflow.actions.choosefrommenu",
+      "WFWorkflowActionParameters": {
+        "GroupingIdentifier": "39BD431B-DE1B-4949-B720-CCE0CFD73389",
+        "WFControlFlowMode": 2
+      }
+    }
+  ]
+}
