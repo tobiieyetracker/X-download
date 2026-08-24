@@ -6,6 +6,7 @@ __pycache__/
 venv/
 
 # Downloads / local test media
+downloads/
 sim_download/
 *.mp4
 *.jpg
@@ -25,3 +26,7 @@ Desktop.ini
 .idea/
 .vscode/
 *.swp
+
+# Electron
+node_modules/
+.electron-profile/

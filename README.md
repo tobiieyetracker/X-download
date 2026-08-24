@@ -30,6 +30,19 @@ python mode_download.py "链接" -m gif
 python best_quality_download.py "链接"
 ```
 
+## Electron 桌面版（Windows）
+
+桌面版复用同一套 Python 解析与下载逻辑：粘贴 X 帖子链接后会自动识别图片或视频，并下载最高清媒体。
+
+```bash
+npm install
+npm start
+```
+
+- 需要已安装 Python 3；应用会优先使用 Windows 的 `py -3`。
+- 下载完成后会读取媒体文件自身的创建日期（照片 EXIF 或视频 `creation_time`），并归档到 `project\downloads\YYYY.MM`，例如 `2026.03`。没有保留创建日期的媒体会放入 `未知日期`，不会用下载时间代替。
+- 下载大文件时会显示当前文件的实时字节进度；服务器未提供文件大小时，进度条会显示为持续加载状态。
+
 ## iOS 快捷指令（未签名）
 
 未签名包：`dist/X-Download.shortcut`  

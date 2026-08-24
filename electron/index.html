@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>X Download</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main>
+      <header>
+        <p class="eyebrow">LOCAL X MEDIA DOWNLOADER</p>
+        <h1>X Download</h1>
+        <p>粘贴 X（Twitter）帖子链接。应用会自动识别图片或视频，并优先下载最高清版本。</p>
+      </header>
+      <form id="download-form">
+        <label for="post-url">帖子链接</label>
+        <div class="input-row">
+          <input id="post-url" type="url" placeholder="https://x.com/…/status/…" required autofocus />
+          <button id="download-button" type="submit">识别并下载</button>
+        </div>
+      </form>
+      <p id="status" aria-live="polite">文件将保存到项目目录的 downloads 文件夹。</p>
+      <section id="progress-panel" hidden aria-live="polite">
+        <progress id="progress-bar" max="100" value="0"></progress>
+        <p id="progress-label">准备下载…</p>
+      </section>
+      <section id="result" aria-live="polite"></section>
+      <details open>
+        <summary>运行日志</summary>
+        <pre id="log">等待链接…</pre>
+      </details>
+    </main>
+    <script src="renderer.js"></script>
+  </body>
+</html>

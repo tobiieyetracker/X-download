@@ -31,7 +31,7 @@ import urllib.request
 from dataclasses import asdict, dataclass
 from html import unescape
 from pathlib import Path
-from typing import Any
+from typing import Any, Callable
 
 API = "https://savetwitter.net/api/ajaxSearch"
 UA = (
@@ -296,21 +296,58 @@ def guess_ext(url: str, ctype: str, default: str) -> str:
     return default
 
 
-def download_one(url: str, proxy: str | None, dest: Path) -> Path:
-    status, hdrs, body = fetch(url)
-    if status == 200 and isinstance(body, bytes) and len(body) > 1000:
-        ext = guess_ext(url, hdrs.get("Content-Type", ""), dest.suffix)
-        path = dest.with_suffix(ext)
-        path.write_bytes(body)
-        return path
-    if proxy:
-        status, hdrs, body = fetch(proxy)
-        if status == 200 and isinstance(body, bytes) and len(body) > 1000:
-            ext = guess_ext(proxy, hdrs.get("Content-Type", ""), dest.suffix)
+def _stream_download(
+    url: str,
+    dest: Path,
+    progress: Callable[[int, int | None], None] | None = None,
+) -> Path:
+    """Download directly to disk so desktop clients can report real progress."""
+    req = urllib.request.Request(url, headers={"User-Agent": UA})
+    try:
+        with urllib.request.urlopen(req, timeout=90) as response:
+            if response.status != 200:
+                raise RuntimeError(f"HTTP {response.status}")
+            total_text = response.headers.get("Content-Length")
+            total = int(total_text) if total_text and total_text.isdigit() else None
+            ext = guess_ext(url, response.headers.get("Content-Type", ""), dest.suffix)
             path = dest.with_suffix(ext)
-            path.write_bytes(body)
-            return path
-    raise RuntimeError(f"download failed: {url} (proxy={proxy})")
+            temporary = path.with_suffix(path.suffix + ".part")
+            downloaded = 0
+            try:
+                with temporary.open("wb") as file:
+                    while chunk := response.read(1024 * 256):
+                        file.write(chunk)
+                        downloaded += len(chunk)
+                        if progress:
+                            progress(downloaded, total)
+                if downloaded <= 1000:
+                    raise RuntimeError("response was too small to be media")
+                temporary.replace(path)
+                return path
+            except Exception:
+                temporary.unlink(missing_ok=True)
+                raise
+    except urllib.error.HTTPError as error:
+        raise RuntimeError(f"HTTP {error.code}") from error
+
+
+def download_one(
+    url: str,
+    proxy: str | None,
+    dest: Path,
+    progress: Callable[[int, int | None], None] | None = None,
+) -> Path:
+    try:
+        return _stream_download(url, dest, progress)
+    except Exception as direct_error:
+        if proxy:
+            try:
+                return _stream_download(proxy, dest, progress)
+            except Exception as proxy_error:
+                raise RuntimeError(
+                    f"download failed: {url} (proxy={proxy}); {direct_error}; {proxy_error}"
+                ) from proxy_error
+        raise RuntimeError(f"download failed: {url}; {direct_error}") from direct_error
 
 
 def download_best(post_url: str, out_dir: Path) -> dict[str, Any]:

@@ -29,7 +29,7 @@ import urllib.parse
 import urllib.request
 from dataclasses import asdict, dataclass
 from pathlib import Path
-from typing import Any, Literal
+from typing import Any, Callable, Literal
 
 # Reuse quality helpers
 from best_quality_download import (  # type: ignore
@@ -38,7 +38,10 @@ from best_quality_download import (  # type: ignore
     PhotoItem,
     VideoItem,
     ajax_search,
+    SNAPCDN,
+    decode_snapcdn,
     download_one,
+    is_video_url,
     is_video_thumb,
     media_id_from_url,
     parse_best_media,
@@ -177,6 +180,29 @@ def from_ajax(post_url: str) -> ParseResult:
     return parse_best_media(post_url)
 
 
+def ajax_all_videos(post_url: str) -> list[VideoItem]:
+    """Keep the best quality for every distinct X video, not one per post."""
+    html = ajax_search(post_url)
+    videos: list[VideoItem] = []
+    for proxy in dict.fromkeys(SNAPCDN.findall(html)):
+        meta = decode_snapcdn(proxy) or {}
+        url = meta.get("url") or ""
+        if not is_video_url(url):
+            continue
+        width, height, pixels = video_resolution(url)
+        videos.append(
+            VideoItem(
+                url=url,
+                width=width,
+                height=height,
+                pixels=pixels,
+                proxy_url=proxy,
+                label="ajaxSearch",
+            )
+        )
+    return best_per_video_group(videos)
+
+
 def is_gif_url(url: str) -> bool:
     u = url.lower()
     return "tweet_video" in u or ".gif" in u.split("?")[0] or "/gif/" in u
@@ -193,8 +219,7 @@ def build_plan(post_url: str, mode: Mode) -> Plan:
         videos = sorted(videos, key=lambda v: v.pixels, reverse=True)[:1]
         if not videos:
             sources.append("ajaxSearch(fallback)")
-            r = from_ajax(post_url)
-            videos = [r.video] if r.video else []
+            videos = ajax_all_videos(post_url)
         return Plan(
             mode,
             post_url,
@@ -259,8 +284,7 @@ def build_plan(post_url: str, mode: Mode) -> Plan:
         videos = best_per_video_group(videos)
         if not videos:
             sources.append("ajaxSearch(fallback)")
-            r = from_ajax(post_url)
-            videos = [r.video] if r.video else []
+            videos = ajax_all_videos(post_url)
         return Plan(
             mode,
             post_url,
@@ -282,7 +306,7 @@ def build_plan(post_url: str, mode: Mode) -> Plan:
         photos = [
             PhotoItem(p.media_id, prefer_photo_url(p.url), p.proxy_url) for p in r.photos
         ]
-        videos = [r.video] if r.video else []
+        videos = ajax_all_videos(post_url)
 
     kinds = []
     if photos:
@@ -293,7 +317,11 @@ def build_plan(post_url: str, mode: Mode) -> Plan:
     return Plan(mode, post_url, photos, videos, note, sources)
 
 
-def execute_plan(plan: Plan, out_dir: Path) -> dict[str, Any]:
+def execute_plan(
+    plan: Plan,
+    out_dir: Path,
+    progress: Callable[[dict[str, Any]], None] | None = None,
+) -> dict[str, Any]:
     out_dir.mkdir(parents=True, exist_ok=True)
     saved: list[str] = []
 
@@ -301,16 +329,52 @@ def execute_plan(plan: Plan, out_dir: Path) -> dict[str, Any]:
     print(f"note={plan.note}")
     print(f"sources={plan.sources}")
 
-    for p in plan.photos:
-        path = download_one(p.url, p.proxy_url, out_dir / f"photo_{p.media_id}.jpg")
-        saved.append(str(path))
-        print(f"  photo {path.name} ({path.stat().st_size:,} bytes)")
+    media: list[tuple[str, PhotoItem | VideoItem]] = [
+        ("photo", photo) for photo in plan.photos
+    ] + [("video", video) for video in plan.videos]
+    total_files = len(media)
+    if progress:
+        progress({"type": "queue", "total_files": total_files})
 
-    for i, v in enumerate(plan.videos):
-        tag = f"{v.width}x{v.height}" if v.pixels else f"{i}"
-        path = download_one(v.url, v.proxy_url, out_dir / f"video_{i}_{tag}.mp4")
+    for index, (kind, item) in enumerate(media, start=1):
+        if kind == "photo":
+            p = item
+            assert isinstance(p, PhotoItem)
+            filename = f"photo_{p.media_id}.jpg"
+            url, proxy = p.url, p.proxy_url
+        else:
+            v = item
+            assert isinstance(v, VideoItem)
+            tag = f"{v.width}x{v.height}" if v.pixels else f"{index - 1}"
+            media_match = re.search(r"/(?:amplify_video|ext_tw_video)/(\d+)/", v.url)
+            media_id = media_match.group(1) if media_match else str(index - 1)
+            filename = f"video_{media_id}_{tag}.mp4"
+            url, proxy = v.url, v.proxy_url
+
+        if progress:
+            progress({
+                "type": "file-start",
+                "index": index,
+                "total_files": total_files,
+                "name": filename,
+            })
+
+        def report_bytes(downloaded: int, total: int | None) -> None:
+            if progress:
+                progress({
+                    "type": "bytes",
+                    "index": index,
+                    "total_files": total_files,
+                    "name": filename,
+                    "downloaded": downloaded,
+                    "total": total,
+                })
+
+        path = download_one(url, proxy, out_dir / filename, report_bytes)
         saved.append(str(path))
-        print(f"  video {path.name} ({path.stat().st_size:,} bytes)")
+        print(f"  {kind} {path.name} ({path.stat().st_size:,} bytes)")
+        if progress:
+            progress({"type": "file-complete", "index": index, "total_files": total_files, "name": path.name})
 
     if not plan.photos and not plan.videos:
         print("  (nothing to download)")
@@ -346,6 +410,11 @@ def main() -> None:
         default="auto",
     )
     ap.add_argument(
+        "--progress-json",
+        action="store_true",
+        help="emit desktop progress events as PROGRESS_JSON lines",
+    )
+    ap.add_argument(
         "-o",
         "--out",
         default=r"project\sim_download\modes",
@@ -353,7 +422,10 @@ def main() -> None:
     args = ap.parse_args()
     plan = build_plan(args.url, args.mode)
     out = Path(args.out) / args.mode
-    execute_plan(plan, out)
+    def emit_progress(event: dict[str, Any]) -> None:
+        print("PROGRESS_JSON:" + json.dumps(event, ensure_ascii=False), flush=True)
+
+    execute_plan(plan, out, emit_progress if args.progress_json else None)
 
 
 if __name__ == "__main__":

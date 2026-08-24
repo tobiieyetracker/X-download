@@ -1,0 +1,23 @@
+:root { color-scheme: dark; font-family: "Segoe UI", sans-serif; background: #101318; color: #edf1f7; }
+* { box-sizing: border-box; }
+body { margin: 0; min-height: 100vh; background: radial-gradient(circle at top right, #263c5f, transparent 38%), #101318; }
+main { max-width: 760px; margin: 0 auto; padding: 58px 28px; }
+header { margin-bottom: 38px; }
+.eyebrow { color: #7eb8ff; font-size: 12px; font-weight: 700; letter-spacing: .14em; }
+h1 { font-size: 42px; margin: 6px 0 12px; }
+header p:not(.eyebrow) { color: #b7c1d0; line-height: 1.6; }
+label { display: block; margin-bottom: 9px; font-weight: 600; }
+.input-row { display: flex; gap: 12px; }
+input { flex: 1; min-width: 0; padding: 14px; border: 1px solid #3d4a5d; border-radius: 10px; background: #171d27; color: inherit; font-size: 15px; }
+button { border: 0; border-radius: 10px; padding: 0 20px; background: #59a8ff; color: #071524; font-size: 14px; font-weight: 700; cursor: pointer; }
+button:disabled { opacity: .6; cursor: wait; }
+#status { min-height: 24px; color: #aeb9c8; margin: 18px 0; }
+#status.success { color: #7be0ad; } #status.error { color: #ff9d9d; } #status.working { color: #8fc3ff; }
+#progress-panel { margin: 18px 0; } #progress-bar { width: 100%; height: 13px; accent-color: #59a8ff; } #progress-label { color: #b7c1d0; font-size: 13px; margin: 8px 0 0; }
+#result { border-left: 3px solid #59a8ff; padding-left: 16px; margin: 18px 0; }
+#result:empty { display: none; }
+#result p { margin: 8px 0; }.location { font-family: Consolas, monospace; color: #aeb9c8; overflow-wrap: anywhere; }
+.secondary { background: #273244; color: #dce9fb; padding: 10px 14px; }
+details { margin-top: 28px; } summary { cursor: pointer; color: #c7d5e8; }
+pre { min-height: 130px; max-height: 220px; overflow: auto; white-space: pre-wrap; background: #0b0f15; border: 1px solid #263142; border-radius: 10px; padding: 14px; color: #aeb9c8; }
+@media (max-width: 600px) { main { padding: 36px 20px; } .input-row { flex-direction: column; } button { min-height: 46px; } }
