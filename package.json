@@ -9,10 +9,10 @@
     "check": "node --check electron/main.js && node --check electron/media-archive.js && node --check electron/preload.js && node --check electron/renderer.js && node --check scripts/download-link.js"
   },
   "devDependencies": {
-    "electron": "^40.2.1"
+    "electron": "^44.1.1"
   },
   "dependencies": {
-    "exifreader": "^4.43.0",
+    "exifreader": "^4.44.0",
     "ffprobe-static": "^3.1.0"
   }
 }
