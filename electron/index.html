@@ -5,105 +5,155 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none';" />
     <title>X Download</title>
-    <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
     <div class="ambient ambient-left" aria-hidden="true"></div>
     <div class="ambient ambient-right" aria-hidden="true"></div>
     <main class="app-shell">
-      <header class="topbar">
-        <div class="brand-lockup">
-          <span class="brand-mark" aria-hidden="true">↗</span>
-          <span class="brand-name">X Download</span>
-          <span class="brand-divider" aria-hidden="true"></span>
-          <span class="brand-caption">LOCAL MEDIA WORKSPACE</span>
-        </div>
-        <div class="runtime-badge"><span class="status-dot" aria-hidden="true"></span>本地运行</div>
-      </header>
-
-      <section class="hero-grid">
-        <div class="hero-copy">
-          <p class="eyebrow">PERSONAL MEDIA WORKSPACE</p>
-          <h1>把 X 里的瞬间，<em>收进你的资料库。</em></h1>
-          <p class="hero-lede">粘贴一个帖子链接，自动识别图片与视频，并按媒体自身日期归档。</p>
-          <div class="feature-row" aria-label="功能特点">
-            <span class="feature-chip"><span aria-hidden="true">✦</span> 高清优先</span>
-            <span class="feature-chip"><span aria-hidden="true">⌂</span> 本地归档</span>
-            <span class="feature-chip"><span aria-hidden="true">↯</span> 无需登录</span>
+      <section id="login-view" class="login-view" aria-labelledby="login-heading">
+        <header class="login-topbar">
+          <div class="brand-lockup">
+            <span class="brand-mark" aria-hidden="true">↗</span>
+            <span class="brand-name">X Download</span>
+            <span class="version-pill">1.0</span>
           </div>
+          <div class="top-status-group">
+            <div class="top-status"><span class="wifi-glyph" aria-hidden="true">⌁</span><span>网络状态</span><small>本地模式</small></div>
+            <div class="top-status healthy"><span class="status-dot" aria-hidden="true"></span><span>网络正常</span><small>↑ 0 B/s&nbsp;&nbsp;↓ 0 B/s</small></div>
+          </div>
+        </header>
+
+        <div class="login-intro">
+          <p class="eyebrow"><span class="eyebrow-dot" aria-hidden="true"></span> SECURE LOGIN WORKSPACE</p>
+          <h1 id="login-heading"><span class="intro-mark" aria-hidden="true">↗</span>X Download <em>媒体工作区</em></h1>
+          <p>登录后管理你的下载偏好；也可以直接使用本地模式开始下载。</p>
         </div>
 
-        <section class="download-card" aria-labelledby="download-heading">
-          <div class="card-topline">
-            <span>READY TO DOWNLOAD</span>
-            <span class="card-index">01</span>
-          </div>
-          <div class="download-symbol" aria-hidden="true">↗</div>
-          <h2 id="download-heading">从一个链接开始</h2>
-          <p class="card-description">支持公开的 X / Twitter 帖子链接</p>
-          <form id="download-form">
-            <label class="field-label" for="post-url">帖子链接</label>
-            <div class="input-shell">
-              <span class="input-prefix" aria-hidden="true">https://</span>
-              <input id="post-url" type="url" placeholder="x.com/name/status/…" required autofocus />
-              <button id="clear-url" class="clear-button" type="button" aria-label="清空链接" title="清空">×</button>
+        <div class="login-layout">
+          <section class="login-card" aria-label="登录方式">
+            <nav class="login-tabs" aria-label="登录方式切换">
+              <button id="qr-login-tab" class="login-tab active" type="button" aria-selected="true"><span aria-hidden="true">▦</span>二维码登录</button>
+              <button id="account-login-tab" class="login-tab" type="button" aria-selected="false"><span aria-hidden="true">⌕</span>账号登录</button>
+              <button id="network-settings-button" class="tab-action" type="button"><span aria-hidden="true">⚙</span>网络设置</button>
+            </nav>
+
+            <div id="qr-login-panel" class="login-panel">
+              <div class="qr-frame" aria-label="登录二维码占位">
+                <div id="qr-grid" class="qr-grid" aria-hidden="true"></div>
+                <span class="qr-corner qr-corner-tl" aria-hidden="true"></span>
+                <span class="qr-corner qr-corner-tr" aria-hidden="true"></span>
+                <span class="qr-corner qr-corner-bl" aria-hidden="true"></span>
+              </div>
+              <div class="qr-caption"><span class="qr-status-dot" aria-hidden="true"></span>等待扫码 · 登录服务接入后生成二维码</div>
+              <div class="login-help">
+                <p class="help-title"><span aria-hidden="true">ⓘ</span> 如何扫码登录</p>
+                <ol>
+                  <li>打开手机客户端或授权设备</li>
+                  <li>进入“设置”中的扫码入口</li>
+                  <li>扫描屏幕上的二维码并确认</li>
+                  <li>登录成功后返回此窗口</li>
+                </ol>
+              </div>
             </div>
-            <p class="field-hint">仅接受 HTTPS 的 x.com / twitter.com status 链接</p>
-            <button id="download-button" class="primary-action" type="submit">
-              <span>识别并下载</span><span class="action-arrow" aria-hidden="true">→</span>
-            </button>
-          </form>
-          <p id="status" aria-live="polite">文件将保存到 downloads 文件夹。</p>
-        </section>
+
+            <form id="account-login-panel" class="login-panel account-panel" hidden>
+              <div class="account-heading">
+                <p class="section-kicker">ACCOUNT ACCESS</p>
+                <h2>使用账号登录</h2>
+                <p>当前先完成界面原型，认证服务稍后接入。</p>
+              </div>
+              <label for="login-account">账号</label>
+              <input id="login-account" type="text" autocomplete="username" placeholder="邮箱或用户名" />
+              <label for="login-password">密码</label>
+              <input id="login-password" type="password" autocomplete="current-password" placeholder="输入密码" />
+              <label class="remember-option"><input id="remember-login" type="checkbox" /> <span>记住登录状态</span></label>
+              <button id="account-login-submit" class="login-submit" type="submit">进入工作区 <span aria-hidden="true">→</span></button>
+              <p id="login-status" class="login-status" aria-live="polite">认证服务尚未连接，不会提交或保存输入内容。</p>
+            </form>
+
+            <button id="skip-login" class="skip-login" type="button">暂不登录，继续使用本地模式 <span aria-hidden="true">→</span></button>
+          </section>
+
+          <aside id="network-card" class="network-card" aria-label="网络状态">
+            <div class="network-heading"><span class="network-icon" aria-hidden="true">⌁</span><div><h2>网络状态</h2><p>访问公开解析服务前，建议先确认网络可用。</p></div></div>
+            <div class="network-state"><span class="status-dot" aria-hidden="true"></span><strong>连接正常</strong><span>本地模式</span></div>
+            <p class="network-note">当前只显示应用网络状态，不会自动修改系统代理或上传账号信息。</p>
+            <div class="network-actions"><button id="network-check" type="button">重新检测</button><button id="network-info" type="button">查看说明</button></div>
+          </aside>
+        </div>
+
+        <footer class="login-footer"><span>LOCAL FIRST</span><span class="footer-line" aria-hidden="true"></span><span>登录协议尚未接入，当前为安全的界面原型</span></footer>
       </section>
 
-      <section class="workspace" aria-label="下载状态">
-        <section id="progress-panel" class="progress-card" hidden aria-live="polite">
-          <div class="section-kicker">DOWNLOAD PROGRESS</div>
-          <div class="progress-heading">
-            <p id="progress-label">准备下载…</p>
-            <strong id="progress-percent">0%</strong>
+      <section id="download-view" class="download-view" hidden aria-labelledby="download-heading">
+        <header class="topbar">
+          <div class="brand-lockup">
+            <span class="brand-mark" aria-hidden="true">↗</span>
+            <span class="brand-name">X Download</span>
+            <span class="brand-divider" aria-hidden="true"></span>
+            <span class="brand-caption">LOCAL MEDIA WORKSPACE</span>
           </div>
-          <div class="progress-track"><progress id="progress-bar" max="100" value="0"></progress></div>
+          <div class="runtime-badge"><span class="status-dot" aria-hidden="true"></span>本地运行</div>
+        </header>
+
+        <section class="hero-grid">
+          <div class="hero-copy">
+            <p class="eyebrow">PERSONAL MEDIA WORKSPACE</p>
+            <h1>把 X 里的瞬间，<em>收进你的资料库。</em></h1>
+            <p class="hero-lede">粘贴一个帖子链接，自动识别图片与视频，并按媒体自身日期归档。</p>
+            <div class="feature-row" aria-label="功能特点">
+              <span class="feature-chip"><span aria-hidden="true">✦</span> 高清优先</span>
+              <span class="feature-chip"><span aria-hidden="true">⌂</span> 本地归档</span>
+              <span class="feature-chip"><span aria-hidden="true">↯</span> 无需登录</span>
+            </div>
+          </div>
+
+          <section class="download-card" aria-labelledby="download-heading">
+            <div class="card-topline"><span>READY TO DOWNLOAD</span><span class="card-index">01</span></div>
+            <div class="download-symbol" aria-hidden="true">↗</div>
+            <h2 id="download-heading">从一个链接开始</h2>
+            <p class="card-description">支持公开的 X / Twitter 帖子链接</p>
+            <form id="download-form">
+              <label class="field-label" for="post-url">帖子链接</label>
+              <div class="input-shell">
+                <span class="input-prefix" aria-hidden="true">https://</span>
+                <input id="post-url" type="url" placeholder="x.com/name/status/…" required autofocus />
+                <button id="clear-url" class="clear-button" type="button" aria-label="清空链接" title="清空">×</button>
+              </div>
+              <p class="field-hint">仅接受 HTTPS 的 x.com / twitter.com status 链接</p>
+              <button id="download-button" class="primary-action" type="submit"><span>识别并下载</span><span class="action-arrow" aria-hidden="true">→</span></button>
+            </form>
+            <p id="status" aria-live="polite">文件将保存到 downloads 文件夹。</p>
+          </section>
         </section>
-        <section id="result" aria-live="polite"></section>
 
-        <div class="utility-grid">
-          <details id="settings-panel" class="utility-card">
-            <summary><span><span class="utility-icon" aria-hidden="true">⚙</span>下载设置</span><span class="summary-note">限制与清理</span></summary>
-            <div class="settings-grid">
-              <label>
-                单个文件上限（MiB）
-                <input id="max-file-size" type="number" min="1" max="8192" step="1" />
-              </label>
-              <label>
-                单次总量上限（MiB）
-                <input id="max-total-size" type="number" min="1" max="32768" step="1" />
-              </label>
-              <label>
-                单次最多文件数
-                <input id="max-files" type="number" min="1" max="100" step="1" />
-              </label>
-            </div>
-            <label class="checkbox-label">
-              <input id="cleanup-failed-tasks" type="checkbox" />
-              <span>下载失败时清理临时文件</span>
-            </label>
-            <div class="settings-actions">
-              <button id="save-settings" class="secondary" type="button">保存设置</button>
-              <span id="settings-status" aria-live="polite"></span>
-            </div>
-          </details>
-          <details open class="utility-card log-card">
-            <summary><span><span class="utility-icon" aria-hidden="true">≋</span>运行日志</span><span class="summary-note">仅本地显示</span></summary>
-            <pre id="log">等待链接…</pre>
-          </details>
-        </div>
+        <section class="workspace" aria-label="下载状态">
+          <section id="progress-panel" class="progress-card" hidden aria-live="polite">
+            <div class="section-kicker">DOWNLOAD PROGRESS</div>
+            <div class="progress-heading"><p id="progress-label">准备下载…</p><strong id="progress-percent">0%</strong></div>
+            <div class="progress-track"><progress id="progress-bar" max="100" value="0"></progress></div>
+          </section>
+          <section id="result" aria-live="polite"></section>
+
+          <div class="utility-grid">
+            <details id="settings-panel" class="utility-card">
+              <summary><span><span class="utility-icon" aria-hidden="true">⚙</span>下载设置</span><span class="summary-note">限制与清理</span></summary>
+              <div class="settings-grid">
+                <label>单个文件上限（MiB）<input id="max-file-size" type="number" min="1" max="8192" step="1" /></label>
+                <label>单次总量上限（MiB）<input id="max-total-size" type="number" min="1" max="32768" step="1" /></label>
+                <label>单次最多文件数<input id="max-files" type="number" min="1" max="100" step="1" /></label>
+              </div>
+              <label class="checkbox-label"><input id="cleanup-failed-tasks" type="checkbox" /><span>下载失败时清理临时文件</span></label>
+              <div class="settings-actions"><button id="save-settings" class="secondary" type="button">保存设置</button><span id="settings-status" aria-live="polite"></span></div>
+            </details>
+            <details open class="utility-card log-card">
+              <summary><span><span class="utility-icon" aria-hidden="true">≋</span>运行日志</span><span class="summary-note">仅本地显示</span></summary>
+              <pre id="log">等待链接…</pre>
+            </details>
+          </div>
+        </section>
+        <footer class="footer-note"><span>LOCAL FIRST</span><span class="footer-line" aria-hidden="true"></span><span>媒体将按自身创建日期归档</span></footer>
       </section>
-
-      <footer class="footer-note">
-        <span>LOCAL FIRST</span><span class="footer-line" aria-hidden="true"></span><span>媒体将按自身创建日期归档</span>
-      </footer>
     </main>
     <script src="renderer.js"></script>
   </body>

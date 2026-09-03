@@ -1,3 +1,17 @@
+const loginView = document.querySelector("#login-view");
+const downloadView = document.querySelector("#download-view");
+const qrLoginTab = document.querySelector("#qr-login-tab");
+const accountLoginTab = document.querySelector("#account-login-tab");
+const qrLoginPanel = document.querySelector("#qr-login-panel");
+const accountLoginPanel = document.querySelector("#account-login-panel");
+const qrGrid = document.querySelector("#qr-grid");
+const accountLoginSubmit = document.querySelector("#account-login-submit");
+const loginStatus = document.querySelector("#login-status");
+const skipLoginButton = document.querySelector("#skip-login");
+const networkCard = document.querySelector("#network-card");
+const networkSettingsButton = document.querySelector("#network-settings-button");
+const networkCheckButton = document.querySelector("#network-check");
+const networkInfoButton = document.querySelector("#network-info");
 const form = document.querySelector("#download-form");
 const urlInput = document.querySelector("#post-url");
 const submitButton = document.querySelector("#download-button");
@@ -15,6 +29,76 @@ const maxFilesInput = document.querySelector("#max-files");
 const cleanupFailedTasksInput = document.querySelector("#cleanup-failed-tasks");
 const saveSettingsButton = document.querySelector("#save-settings");
 const settingsStatus = document.querySelector("#settings-status");
+
+function buildQrPlaceholder() {
+  const size = 21;
+  const cells = [];
+  const finder = (x, y, originX, originY) => {
+    const localX = x - originX;
+    const localY = y - originY;
+    if (localX < 0 || localX > 6 || localY < 0 || localY > 6) return null;
+    return localX === 0 || localX === 6 || localY === 0 || localY === 6 || (localX >= 2 && localX <= 4 && localY >= 2 && localY <= 4);
+  };
+  for (let y = 0; y < size; y += 1) {
+    for (let x = 0; x < size; x += 1) {
+      const finderValue = finder(x, y, 0, 0) ?? finder(x, y, size - 7, 0) ?? finder(x, y, 0, size - 7);
+      let dark = finderValue;
+      if (dark === null) {
+        const seed = (x * 17 + y * 31 + x * y * 7 + (x ^ y) * 13) % 19;
+        dark = seed < 8 || (x + y) % 11 === 0;
+      }
+      const cell = document.createElement("span");
+      cell.className = `qr-cell${dark ? " dark" : ""}`;
+      cells.push(cell);
+    }
+  }
+  qrGrid.replaceChildren(...cells);
+}
+
+function activateLoginMode(mode) {
+  const qrMode = mode === "qr";
+  qrLoginTab.classList.toggle("active", qrMode);
+  accountLoginTab.classList.toggle("active", !qrMode);
+  qrLoginTab.setAttribute("aria-selected", String(qrMode));
+  accountLoginTab.setAttribute("aria-selected", String(!qrMode));
+  qrLoginPanel.hidden = !qrMode;
+  accountLoginPanel.hidden = qrMode;
+  if (!qrMode) document.querySelector("#login-account").focus();
+}
+
+function enterLocalMode() {
+  loginView.hidden = true;
+  downloadView.hidden = false;
+  urlInput.focus();
+}
+
+buildQrPlaceholder();
+qrLoginTab.addEventListener("click", () => activateLoginMode("qr"));
+accountLoginTab.addEventListener("click", () => activateLoginMode("account"));
+skipLoginButton.addEventListener("click", enterLocalMode);
+
+accountLoginPanel.addEventListener("submit", (event) => {
+  event.preventDefault();
+  loginStatus.textContent = "认证服务尚未接入；本次不会提交或保存账号信息。";
+  loginStatus.className = "login-status warning";
+});
+
+networkSettingsButton.addEventListener("click", () => {
+  networkCard.classList.add("is-highlighted");
+  networkCard.scrollIntoView({ behavior: "smooth", block: "center" });
+  window.setTimeout(() => networkCard.classList.remove("is-highlighted"), 900);
+});
+
+networkCheckButton.addEventListener("click", () => {
+  networkCheckButton.textContent = "检测完成";
+  window.setTimeout(() => { networkCheckButton.textContent = "重新检测"; }, 1400);
+});
+
+networkInfoButton.addEventListener("click", () => {
+  loginStatus.textContent = "网络状态仅用于提示，不会自动配置系统代理。";
+  loginStatus.className = "login-status";
+  activateLoginMode("qr");
+});
 
 function setBusy(busy) {
   submitButton.disabled = busy;
