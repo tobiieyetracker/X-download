@@ -33,6 +33,24 @@ from html import unescape
 from pathlib import Path
 from typing import Any, Callable
 
+from download_security import (
+    DEFAULT_MAX_FILE_MB,
+    DEFAULT_MAX_FILES,
+    DEFAULT_MAX_TOTAL_MB,
+    DOWNLOAD_HOSTS,
+    MAX_API_RESPONSE_BYTES,
+    PARSER_HOSTS,
+    is_allowed_download_url,
+    is_allowed_media_url,
+    is_allowed_proxy_url,
+    is_allowed_video_url,
+    is_x_post_url,
+    mb_to_bytes,
+    read_limited,
+    redact_url,
+    safe_urlopen,
+)
+
 API = "https://savetwitter.net/api/ajaxSearch"
 DEFAULT_OUT = Path(__file__).resolve().parent / "downloads" / "best"
 UA = (
@@ -89,10 +107,10 @@ def fetch(
         h.update(headers)
     req = urllib.request.Request(url, data=data, headers=h, method=method)
     try:
-        with urllib.request.urlopen(req, timeout=timeout) as resp:
-            return resp.status, dict(resp.headers), resp.read()
+        with safe_urlopen(req, PARSER_HOSTS, timeout=timeout) as resp:
+            return resp.status, dict(resp.headers), read_limited(resp, MAX_API_RESPONSE_BYTES)
     except urllib.error.HTTPError as e:
-        return e.code, dict(e.headers), e.read()
+        return e.code, dict(e.headers), read_limited(e, MAX_API_RESPONSE_BYTES)
     except Exception as e:
         return None, {}, repr(e).encode()
 
@@ -105,6 +123,8 @@ def b64url_json(segment: str) -> dict[str, Any]:
 
 def decode_snapcdn(url: str) -> dict[str, Any] | None:
     try:
+        if not is_allowed_proxy_url(url):
+            return None
         token = urllib.parse.parse_qs(urllib.parse.urlparse(url).query)["token"][0]
         return b64url_json(token.split(".")[1])
     except Exception:
@@ -140,11 +160,11 @@ def is_video_thumb(url: str) -> bool:
 
 
 def is_photo_url(url: str) -> bool:
-    return "pbs.twimg.com/media" in url and not is_video_thumb(url)
+    return is_allowed_media_url(url) and not is_video_thumb(url)
 
 
 def is_video_url(url: str) -> bool:
-    return "video.twimg.com" in url and ".mp4" in url.split("?")[0].lower()
+    return is_allowed_video_url(url)
 
 
 def ajax_search(post_url: str) -> str:
@@ -301,15 +321,22 @@ def _stream_download(
     url: str,
     dest: Path,
     progress: Callable[[int, int | None], None] | None = None,
+    max_bytes: int | None = None,
 ) -> Path:
     """Download directly to disk so desktop clients can report real progress."""
+    if not is_allowed_download_url(url):
+        raise RuntimeError(f"拒绝下载未允许的地址：{redact_url(url)}")
     req = urllib.request.Request(url, headers={"User-Agent": UA})
     try:
-        with urllib.request.urlopen(req, timeout=90) as response:
+        with safe_urlopen(req, DOWNLOAD_HOSTS, timeout=90) as response:
+            if not is_allowed_download_url(response.geturl()):
+                raise RuntimeError(f"拒绝下载重定向地址：{redact_url(response.geturl())}")
             if response.status != 200:
                 raise RuntimeError(f"HTTP {response.status}")
             total_text = response.headers.get("Content-Length")
             total = int(total_text) if total_text and total_text.isdigit() else None
+            if max_bytes is not None and total is not None and total > max_bytes:
+                raise RuntimeError(f"文件超过 {max_bytes // (1024 * 1024)} MiB 限制")
             ext = guess_ext(url, response.headers.get("Content-Type", ""), dest.suffix)
             path = dest.with_suffix(ext)
             temporary = path.with_suffix(path.suffix + ".part")
@@ -319,6 +346,8 @@ def _stream_download(
                     while chunk := response.read(1024 * 256):
                         file.write(chunk)
                         downloaded += len(chunk)
+                        if max_bytes is not None and downloaded > max_bytes:
+                            raise RuntimeError(f"文件超过 {max_bytes // (1024 * 1024)} MiB 限制")
                         if progress:
                             progress(downloaded, total)
                 if downloaded <= 1000:
@@ -337,39 +366,82 @@ def download_one(
     proxy: str | None,
     dest: Path,
     progress: Callable[[int, int | None], None] | None = None,
+    max_bytes: int | None = None,
 ) -> Path:
+    if not is_allowed_media_url(url):
+        raise RuntimeError(f"拒绝下载未允许的媒体地址：{redact_url(url)}")
+    if proxy and not is_allowed_proxy_url(proxy):
+        proxy = None
     try:
-        return _stream_download(url, dest, progress)
+        return _stream_download(url, dest, progress, max_bytes=max_bytes)
     except Exception as direct_error:
         if proxy:
             try:
-                return _stream_download(proxy, dest, progress)
+                return _stream_download(proxy, dest, progress, max_bytes=max_bytes)
             except Exception as proxy_error:
                 raise RuntimeError(
-                    f"download failed: {url} (proxy={proxy}); {direct_error}; {proxy_error}"
+                    f"download failed: {redact_url(url)} (proxy={redact_url(proxy)}); "
+                    f"{direct_error}; {proxy_error}"
                 ) from proxy_error
-        raise RuntimeError(f"download failed: {url}; {direct_error}") from direct_error
+        raise RuntimeError(f"download failed: {redact_url(url)}; {direct_error}") from direct_error
 
 
-def download_best(post_url: str, out_dir: Path) -> dict[str, Any]:
+def download_best(
+    post_url: str,
+    out_dir: Path,
+    max_file_bytes: int | None = None,
+    max_total_bytes: int | None = None,
+    max_files: int | None = None,
+    debug: bool = False,
+) -> dict[str, Any]:
+    if not is_x_post_url(post_url):
+        raise ValueError("请提供有效的 X/Twitter 帖子链接。")
     out_dir.mkdir(parents=True, exist_ok=True)
     html = ajax_search(post_url)
-    (out_dir / "ajaxSearch_data.html").write_text(html, encoding="utf-8")
+    if debug:
+        (out_dir / "ajaxSearch_data.html").write_text(html, encoding="utf-8")
     result = parse_best_media(post_url, html=html)
 
+    media_count = len(result.photos) + (1 if result.video else 0)
+    if max_files is not None and media_count > max_files:
+        raise RuntimeError(f"媒体数量 {media_count} 超过 {max_files} 个文件限制")
+
     saved: list[str] = []
+    total_downloaded = 0
     for p in result.photos:
+        limit = max_file_bytes
+        if max_total_bytes is not None:
+            remaining = max_total_bytes - total_downloaded
+            if remaining <= 0:
+                raise RuntimeError("任务超过总下载大小限制")
+            limit = remaining if limit is None else min(limit, remaining)
         path = download_one(
-            p.url, p.proxy_url, out_dir / f"photo_{p.media_id}.jpg"
+            p.url,
+            p.proxy_url,
+            out_dir / f"photo_{p.media_id}.jpg",
+            max_bytes=limit,
         )
         saved.append(str(path))
+        total_downloaded += path.stat().st_size
         print(f"photo {p.media_id}: {path.name} ({path.stat().st_size:,} bytes)")
 
     if result.video:
         v = result.video
         tag = f"{v.width}x{v.height}" if v.pixels else "best"
-        path = download_one(v.url, v.proxy_url, out_dir / f"video_{tag}.mp4")
+        limit = max_file_bytes
+        if max_total_bytes is not None:
+            remaining = max_total_bytes - total_downloaded
+            if remaining <= 0:
+                raise RuntimeError("任务超过总下载大小限制")
+            limit = remaining if limit is None else min(limit, remaining)
+        path = download_one(
+            v.url,
+            v.proxy_url,
+            out_dir / f"video_{tag}.mp4",
+            max_bytes=limit,
+        )
         saved.append(str(path))
+        total_downloaded += path.stat().st_size
         print(
             f"video {tag}: {path.name} ({path.stat().st_size:,} bytes) "
             f"[picked max of {len(result.all_video_qualities)} qualities]"
@@ -387,8 +459,12 @@ def download_best(post_url: str, out_dir: Path) -> dict[str, Any]:
             "videos": "single highest WxH by pixel area",
             "api": API,
         },
-        "photos": [asdict(p) for p in result.photos],
-        "video_selected": asdict(result.video) if result.video else None,
+        "photos": [{k: v for k, v in asdict(p).items() if k != "proxy_url"} for p in result.photos],
+        "video_selected": (
+            {k: v for k, v in asdict(result.video).items() if k != "proxy_url"}
+            if result.video
+            else None
+        ),
         "video_all_qualities": result.all_video_qualities,
         "skipped_thumbs": result.skipped_thumbs,
         "saved": saved,
@@ -409,8 +485,19 @@ def main() -> None:
         default=str(DEFAULT_OUT),
         help="output directory",
     )
+    ap.add_argument("--max-file-mb", type=int, default=DEFAULT_MAX_FILE_MB)
+    ap.add_argument("--max-total-mb", type=int, default=DEFAULT_MAX_TOTAL_MB)
+    ap.add_argument("--max-files", type=int, default=DEFAULT_MAX_FILES)
+    ap.add_argument("--debug", action="store_true", help="保存原始解析响应，仅用于排查问题")
     args = ap.parse_args()
-    summary = download_best(args.url, Path(args.out))
+    summary = download_best(
+        args.url,
+        Path(args.out),
+        max_file_bytes=mb_to_bytes(args.max_file_mb, "--max-file-mb"),
+        max_total_bytes=mb_to_bytes(args.max_total_mb, "--max-total-mb"),
+        max_files=args.max_files,
+        debug=args.debug,
+    )
     print("\n=== selected ===")
     print(f"photos: {len(summary['photos'])}")
     if summary["video_selected"]:

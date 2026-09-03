@@ -30,12 +30,18 @@ function run(command, args) {
 async function main() {
   if (!isXPostUrl(postUrl)) throw new Error("请提供有效的 X/Twitter 帖子链接。");
   const taskDirectory = path.join(downloadsRoot, ".staging", timestamp());
-  await fs.mkdir(taskDirectory, { recursive: true });
-  await run("py", ["-3", "mode_download.py", postUrl, "-m", "auto", "-o", taskDirectory]);
-  const resultPath = path.join(taskDirectory, "auto", "result.json");
-  const result = JSON.parse(await fs.readFile(resultPath, "utf8"));
-  const archive = await organizeByMediaDate(taskDirectory, result, downloadsRoot);
-  console.log(JSON.stringify({ ...archive, result }, null, 2));
+  let succeeded = false;
+  try {
+    await fs.mkdir(taskDirectory, { recursive: true });
+    await run("py", ["-3", "mode_download.py", postUrl, "-m", "auto", "-o", taskDirectory]);
+    const resultPath = path.join(taskDirectory, "auto", "result.json");
+    const result = JSON.parse(await fs.readFile(resultPath, "utf8"));
+    const archive = await organizeByMediaDate(taskDirectory, result, downloadsRoot);
+    succeeded = true;
+    console.log(JSON.stringify({ ...archive, result }, null, 2));
+  } finally {
+    if (!succeeded) await fs.rm(taskDirectory, { recursive: true, force: true }).catch(() => {});
+  }
 }
 
 main().catch((error) => { console.error(error.message); process.exitCode = 1; });

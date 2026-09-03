@@ -27,6 +27,31 @@
         <p id="progress-label">准备下载…</p>
       </section>
       <section id="result" aria-live="polite"></section>
+      <details id="settings-panel">
+        <summary>下载设置</summary>
+        <div class="settings-grid">
+          <label>
+            单个文件上限（MiB）
+            <input id="max-file-size" type="number" min="1" max="8192" step="1" />
+          </label>
+          <label>
+            单次总量上限（MiB）
+            <input id="max-total-size" type="number" min="1" max="32768" step="1" />
+          </label>
+          <label>
+            单次最多文件数
+            <input id="max-files" type="number" min="1" max="100" step="1" />
+          </label>
+        </div>
+        <label class="checkbox-label">
+          <input id="cleanup-failed-tasks" type="checkbox" />
+          下载失败时清理临时文件
+        </label>
+        <div class="settings-actions">
+          <button id="save-settings" class="secondary" type="button">保存设置</button>
+          <span id="settings-status" aria-live="polite"></span>
+        </div>
+      </details>
       <details open>
         <summary>运行日志</summary>
         <pre id="log">等待链接…</pre>

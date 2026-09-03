@@ -19,5 +19,12 @@ button:disabled { opacity: .6; cursor: wait; }
 #result p { margin: 8px 0; }.location { font-family: Consolas, monospace; color: #aeb9c8; overflow-wrap: anywhere; }
 .secondary { background: #273244; color: #dce9fb; padding: 10px 14px; }
 details { margin-top: 28px; } summary { cursor: pointer; color: #c7d5e8; }
+.settings-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 16px; }
+.settings-grid label { color: #b7c1d0; font-size: 13px; }
+.settings-grid input { width: 100%; margin-top: 8px; }
+.checkbox-label { display: flex; align-items: center; gap: 8px; margin: 16px 0; color: #b7c1d0; font-size: 13px; }
+.checkbox-label input { flex: 0 0 auto; width: auto; }
+.settings-actions { display: flex; align-items: center; gap: 12px; }
+#settings-status { color: #7be0ad; font-size: 13px; }
 pre { min-height: 130px; max-height: 220px; overflow: auto; white-space: pre-wrap; background: #0b0f15; border: 1px solid #263142; border-radius: 10px; padding: 14px; color: #aeb9c8; }
-@media (max-width: 600px) { main { padding: 36px 20px; } .input-row { flex-direction: column; } button { min-height: 46px; } }
+@media (max-width: 600px) { main { padding: 36px 20px; } .input-row { flex-direction: column; } .settings-grid { grid-template-columns: 1fr; } button { min-height: 46px; } }

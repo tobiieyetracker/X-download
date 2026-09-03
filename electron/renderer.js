@@ -7,6 +7,12 @@ const result = document.querySelector("#result");
 const progressPanel = document.querySelector("#progress-panel");
 const progressBar = document.querySelector("#progress-bar");
 const progressLabel = document.querySelector("#progress-label");
+const maxFileSizeInput = document.querySelector("#max-file-size");
+const maxTotalSizeInput = document.querySelector("#max-total-size");
+const maxFilesInput = document.querySelector("#max-files");
+const cleanupFailedTasksInput = document.querySelector("#cleanup-failed-tasks");
+const saveSettingsButton = document.querySelector("#save-settings");
+const settingsStatus = document.querySelector("#settings-status");
 
 function setBusy(busy) {
   submitButton.disabled = busy;
@@ -45,6 +51,39 @@ function formatBytes(bytes) {
   if (bytes < 1024 * 1024) return `${Math.round(bytes / 1024)} KB`;
   return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
 }
+
+function renderSettings(settings) {
+  maxFileSizeInput.value = settings.maxFileSizeMb;
+  maxTotalSizeInput.value = settings.maxTotalSizeMb;
+  maxFilesInput.value = settings.maxFiles;
+  cleanupFailedTasksInput.checked = settings.cleanupFailedTasks;
+}
+
+async function loadSettings() {
+  try {
+    renderSettings(await window.xDownload.getSettings());
+  } catch (error) {
+    settingsStatus.textContent = error.message || "设置读取失败";
+  }
+}
+
+saveSettingsButton.addEventListener("click", async () => {
+  settingsStatus.textContent = "正在保存…";
+  try {
+    const settings = await window.xDownload.saveSettings({
+      maxFileSizeMb: Number(maxFileSizeInput.value),
+      maxTotalSizeMb: Number(maxTotalSizeInput.value),
+      maxFiles: Number(maxFilesInput.value),
+      cleanupFailedTasks: cleanupFailedTasksInput.checked
+    });
+    renderSettings(settings);
+    settingsStatus.textContent = "已保存";
+  } catch (error) {
+    settingsStatus.textContent = error.message || "设置保存失败";
+  }
+});
+
+loadSettings();
 
 window.xDownload.onProgress((progress) => {
   progressPanel.hidden = false;

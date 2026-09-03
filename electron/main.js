@@ -13,8 +13,51 @@ const projectRoot = path.resolve(__dirname, "..");
 const downloaderScript = path.join(projectRoot, "mode_download.py");
 const downloadsRoot = path.join(projectRoot, "downloads");
 
-// Keep this app's Chromium cache separate from other Electron development apps.
-app.setPath("userData", path.join(projectRoot, ".electron-profile"));
+const DEFAULT_SETTINGS = Object.freeze({
+  maxFileSizeMb: 1024,
+  maxTotalSizeMb: 4096,
+  maxFiles: 50,
+  cleanupFailedTasks: true
+});
+
+let settings = { ...DEFAULT_SETTINGS };
+
+function boundedInteger(value, fallback, minimum, maximum) {
+  const number = Number(value);
+  if (!Number.isInteger(number)) return fallback;
+  return Math.min(maximum, Math.max(minimum, number));
+}
+
+function normalizeSettings(value) {
+  const raw = value && typeof value === "object" ? value : {};
+  return {
+    maxFileSizeMb: boundedInteger(raw.maxFileSizeMb, DEFAULT_SETTINGS.maxFileSizeMb, 1, 8192),
+    maxTotalSizeMb: boundedInteger(raw.maxTotalSizeMb, DEFAULT_SETTINGS.maxTotalSizeMb, 1, 32768),
+    maxFiles: boundedInteger(raw.maxFiles, DEFAULT_SETTINGS.maxFiles, 1, 100),
+    cleanupFailedTasks: raw.cleanupFailedTasks !== false
+  };
+}
+
+function settingsFile() {
+  return path.join(app.getPath("userData"), "settings.json");
+}
+
+async function loadSettings() {
+  try {
+    const value = JSON.parse(await fs.readFile(settingsFile(), "utf8"));
+    return normalizeSettings(value);
+  } catch (error) {
+    if (error.code !== "ENOENT") console.warn("无法读取下载设置，将使用默认值。", error.message);
+    return { ...DEFAULT_SETTINGS };
+  }
+}
+
+async function persistSettings(value) {
+  settings = normalizeSettings(value);
+  await fs.mkdir(app.getPath("userData"), { recursive: true });
+  await fs.writeFile(settingsFile(), `${JSON.stringify(settings, null, 2)}\n`, "utf8");
+  return settings;
+}
 
 function isXPostUrl(value) {
   try {
@@ -169,10 +212,25 @@ function execute(command, args, onOutput) {
   });
 }
 
-async function runDownloader(postUrl, onLog, onProgress) {
+async function runDownloader(postUrl, onLog, onProgress, currentSettings) {
   const taskDirectory = path.join(downloadsRoot, ".staging", timestamp());
   await fs.mkdir(taskDirectory, { recursive: true });
-  const args = ["-3", downloaderScript, postUrl, "-m", "auto", "-o", taskDirectory, "--progress-json"];
+  const args = [
+    "-3",
+    downloaderScript,
+    postUrl,
+    "-m",
+    "auto",
+    "-o",
+    taskDirectory,
+    "--progress-json",
+    "--max-file-mb",
+    String(currentSettings.maxFileSizeMb),
+    "--max-total-mb",
+    String(currentSettings.maxTotalSizeMb),
+    "--max-files",
+    String(currentSettings.maxFiles)
+  ];
   let lineBuffer = "";
   const consumeOutput = (chunk) => {
     lineBuffer += chunk;
@@ -187,18 +245,25 @@ async function runDownloader(postUrl, onLog, onProgress) {
   };
 
   try {
-    await execute("py", args, consumeOutput);
-  } catch (pyError) {
-    onLog("py 启动失败，正在尝试 python…\n");
-    await execute("python", args.slice(1), consumeOutput).catch((pythonError) => {
-      throw new Error(`无法运行 Python 下载器。\npy: ${pyError.message}\npython: ${pythonError.message}`);
-    });
+    try {
+      await execute("py", args, consumeOutput);
+    } catch (pyError) {
+      onLog("py 启动失败，正在尝试 python…\n");
+      await execute("python", args.slice(1), consumeOutput).catch((pythonError) => {
+        throw new Error(`无法运行 Python 下载器。\npy: ${pyError.message}\npython: ${pythonError.message}`);
+      });
+    }
+    const resultPath = path.join(taskDirectory, "auto", "result.json");
+    const result = JSON.parse(await fs.readFile(resultPath, "utf8"));
+    const archive = await organizeByMediaDate(taskDirectory, result);
+    return { ...archive, result };
+  } catch (error) {
+    if (currentSettings.cleanupFailedTasks) {
+      await fs.rm(taskDirectory, { recursive: true, force: true }).catch(() => {});
+      onLog("已清理失败任务的临时文件。\n");
+    }
+    throw error;
   }
-
-  const resultPath = path.join(taskDirectory, "auto", "result.json");
-  const result = JSON.parse(await fs.readFile(resultPath, "utf8"));
-  const archive = await organizeByMediaDate(taskDirectory, result);
-  return { ...archive, result };
 }
 
 function createWindow() {
@@ -218,7 +283,10 @@ function createWindow() {
   window.loadFile(path.join(__dirname, "index.html"));
 }
 
-app.whenReady().then(() => {
+app.whenReady().then(async () => {
+  settings = await loadSettings();
+  ipcMain.handle("get-settings", () => settings);
+  ipcMain.handle("save-settings", (_event, value) => persistSettings(value));
   ipcMain.handle("download", async (event, postUrl) => {
     if (typeof postUrl !== "string" || !isXPostUrl(postUrl)) {
       throw new Error("请输入有效的 X / Twitter 帖子链接，例如 https://x.com/name/status/123。");
@@ -226,7 +294,8 @@ app.whenReady().then(() => {
     return runDownloader(
       postUrl.trim(),
       (text) => event.sender.send("download-log", text),
-      (progress) => event.sender.send("download-progress", progress)
+      (progress) => event.sender.send("download-progress", progress),
+      settings
     );
   });
   ipcMain.handle("open-download-folder", async (_event, directory) => {

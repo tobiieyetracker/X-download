@@ -28,4 +28,4 @@
 python best_quality_download.py "https://x.com/<user>/status/<post_id>"
 ```
 
-输出目录默认：`sim_download/best/`，并写 `result.json`（含全部清晰度列表 + 最终选中项）。
+输出目录默认：`downloads/best/`，并写 `result.json`（只含媒体解析结果和最终选中项，不保存代理 token）。原始解析响应仅在显式使用 `--debug` 时写入 `ajaxSearch_data.html`。

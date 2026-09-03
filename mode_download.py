@@ -31,6 +31,18 @@ from dataclasses import asdict, dataclass
 from pathlib import Path
 from typing import Any, Callable, Literal
 
+from download_security import (
+    DEFAULT_MAX_FILE_MB,
+    DEFAULT_MAX_FILES,
+    DEFAULT_MAX_TOTAL_MB,
+    PARSER_HOSTS,
+    is_allowed_photo_url,
+    is_x_post_url,
+    mb_to_bytes,
+    read_limited,
+    safe_urlopen,
+)
+
 # Reuse quality helpers
 from best_quality_download import (  # type: ignore
     API as AJAX_API,
@@ -83,10 +95,10 @@ def fetch(
         h.update(headers)
     req = urllib.request.Request(url, data=data, headers=h, method=method)
     try:
-        with urllib.request.urlopen(req, timeout=timeout) as resp:
-            return resp.status, resp.read()
+        with safe_urlopen(req, PARSER_HOSTS, timeout=timeout) as resp:
+            return resp.status, read_limited(resp)
     except urllib.error.HTTPError as e:
-        return e.code, e.read()
+        return e.code, read_limited(e)
     except Exception as e:
         return None, repr(e).encode()
 
@@ -130,7 +142,7 @@ def parse_nichind(post_url: str) -> tuple[list[PhotoItem], list[VideoItem]]:
         u = item.get("url") or item.get("videoURL") or ""
         if not u:
             return
-        if typ == "photo" or ("pbs.twimg.com/media" in u and not is_video_thumb(u)):
+        if is_allowed_photo_url(u) and not is_video_thumb(u):
             if is_video_thumb(u):
                 return
             mid = media_id_from_url(u)
@@ -140,7 +152,7 @@ def parse_nichind(post_url: str) -> tuple[list[PhotoItem], list[VideoItem]]:
             photos.append(
                 PhotoItem(media_id=mid, url=prefer_photo_url(u), proxy_url=None)
             )
-        elif typ in {"video", "gif"} or "video.twimg.com" in u:
+        elif (typ in {"video", "gif"} or is_video_url(u)) and is_video_url(u):
             if u in seen_video:
                 return
             seen_video.add(u)
@@ -210,6 +222,8 @@ def is_gif_url(url: str) -> bool:
 
 
 def build_plan(post_url: str, mode: Mode) -> Plan:
+    if not is_x_post_url(post_url):
+        raise ValueError("请提供有效的 X/Twitter 帖子链接。")
     sources: list[str] = []
 
     if mode == "single_video":
@@ -322,6 +336,9 @@ def execute_plan(
     plan: Plan,
     out_dir: Path,
     progress: Callable[[dict[str, Any]], None] | None = None,
+    max_file_bytes: int | None = None,
+    max_total_bytes: int | None = None,
+    max_files: int | None = None,
 ) -> dict[str, Any]:
     out_dir.mkdir(parents=True, exist_ok=True)
     saved: list[str] = []
@@ -334,9 +351,12 @@ def execute_plan(
         ("photo", photo) for photo in plan.photos
     ] + [("video", video) for video in plan.videos]
     total_files = len(media)
+    if max_files is not None and total_files > max_files:
+        raise RuntimeError(f"媒体数量 {total_files} 超过 {max_files} 个文件限制")
     if progress:
         progress({"type": "queue", "total_files": total_files})
 
+    total_downloaded = 0
     for index, (kind, item) in enumerate(media, start=1):
         if kind == "photo":
             p = item
@@ -371,8 +391,21 @@ def execute_plan(
                     "total": total,
                 })
 
-        path = download_one(url, proxy, out_dir / filename, report_bytes)
+        limit = max_file_bytes
+        if max_total_bytes is not None:
+            remaining = max_total_bytes - total_downloaded
+            if remaining <= 0:
+                raise RuntimeError("任务超过总下载大小限制")
+            limit = remaining if limit is None else min(limit, remaining)
+        path = download_one(
+            url,
+            proxy,
+            out_dir / filename,
+            report_bytes,
+            max_bytes=limit,
+        )
         saved.append(str(path))
+        total_downloaded += path.stat().st_size
         print(f"  {kind} {path.name} ({path.stat().st_size:,} bytes)")
         if progress:
             progress({"type": "file-complete", "index": index, "total_files": total_files, "name": path.name})
@@ -385,8 +418,8 @@ def execute_plan(
         "post_url": plan.post_url,
         "note": plan.note,
         "sources": plan.sources,
-        "photos": [asdict(p) for p in plan.photos],
-        "videos": [asdict(v) for v in plan.videos],
+        "photos": [{k: v for k, v in asdict(p).items() if k != "proxy_url"} for p in plan.photos],
+        "videos": [{k: v for k, v in asdict(v).items() if k != "proxy_url"} for v in plan.videos],
         "saved": saved,
         "endpoints": {
             "ajaxSearch": AJAX_API,
@@ -420,13 +453,23 @@ def main() -> None:
         "--out",
         default=str(DEFAULT_OUT),
     )
+    ap.add_argument("--max-file-mb", type=int, default=DEFAULT_MAX_FILE_MB)
+    ap.add_argument("--max-total-mb", type=int, default=DEFAULT_MAX_TOTAL_MB)
+    ap.add_argument("--max-files", type=int, default=DEFAULT_MAX_FILES)
     args = ap.parse_args()
     plan = build_plan(args.url, args.mode)
     out = Path(args.out) / args.mode
     def emit_progress(event: dict[str, Any]) -> None:
         print("PROGRESS_JSON:" + json.dumps(event, ensure_ascii=False), flush=True)
 
-    execute_plan(plan, out, emit_progress if args.progress_json else None)
+    execute_plan(
+        plan,
+        out,
+        emit_progress if args.progress_json else None,
+        max_file_bytes=mb_to_bytes(args.max_file_mb, "--max-file-mb"),
+        max_total_bytes=mb_to_bytes(args.max_total_mb, "--max-total-mb"),
+        max_files=args.max_files,
+    )
 
 
 if __name__ == "__main__":

@@ -7,12 +7,20 @@ venv/
 
 # Downloads / local test media
 downloads/
-sim_download/
 *.mp4
 *.jpg
 *.jpeg
 *.png
 *.webp
+*.mov
+*.m4v
+*.webm
+*.heic
+*.avif
+*.part
+result.json
+ajaxSearch_data.html
+.staging/
 
 # Keep shortcut packages, ignore accidental large dumps
 *.log
