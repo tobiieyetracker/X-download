@@ -3,10 +3,10 @@ description: Always commit and push local changes to origin
 alwaysApply: true
 ---
 
-# Git push policy
+# Git identity and push policy
 
-Whenever this project has local modifications that should be kept (docs, code, shortcut builds, etc.):
+When this project is intentionally committed:
 
-1. Commit with a clear message (author: `tobiieyetracker` / `tobiieyetracker@users.noreply.github.com` via `git -c`, do not change global git config).
-2. Push to `origin` (`main`) immediately after the commit.
-3. Do not wait for the user to ask again to push — they requested continuous push for local changes.
+1. Use the public GitHub noreply identity, never a personal email address.
+2. Use a clear commit message.
+3. Do not push or rewrite remote history without the user explicitly asking for it.

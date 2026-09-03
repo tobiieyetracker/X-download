@@ -53,6 +53,7 @@ Mode = Literal["photo", "gif", "single_video", "multi_video", "auto"]
 
 # Public API for https://download.nichind.dev/
 NICHIND = "https://dwnld.nichind.dev/"
+DEFAULT_OUT = Path(__file__).resolve().parent / "downloads" / "modes"
 UA = (
     "Mozilla/5.0 (iPhone; CPU iPhone OS 18_7 like Mac OS X) "
     "AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.1 "
@@ -417,7 +418,7 @@ def main() -> None:
     ap.add_argument(
         "-o",
         "--out",
-        default=r"project\sim_download\modes",
+        default=str(DEFAULT_OUT),
     )
     args = ap.parse_args()
     plan = build_plan(args.url, args.mode)

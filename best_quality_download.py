@@ -34,6 +34,7 @@ from pathlib import Path
 from typing import Any, Callable
 
 API = "https://savetwitter.net/api/ajaxSearch"
+DEFAULT_OUT = Path(__file__).resolve().parent / "downloads" / "best"
 UA = (
     "Mozilla/5.0 (iPhone; CPU iPhone OS 18_7 like Mac OS X) "
     "AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.1 "
@@ -405,7 +406,7 @@ def main() -> None:
     ap.add_argument(
         "-o",
         "--out",
-        default=r"project\sim_download\best",
+        default=str(DEFAULT_OUT),
         help="output directory",
     )
     args = ap.parse_args()
