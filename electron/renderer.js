@@ -7,6 +7,8 @@ const result = document.querySelector("#result");
 const progressPanel = document.querySelector("#progress-panel");
 const progressBar = document.querySelector("#progress-bar");
 const progressLabel = document.querySelector("#progress-label");
+const progressPercent = document.querySelector("#progress-percent");
+const clearUrlButton = document.querySelector("#clear-url");
 const maxFileSizeInput = document.querySelector("#max-file-size");
 const maxTotalSizeInput = document.querySelector("#max-total-size");
 const maxFilesInput = document.querySelector("#max-files");
@@ -16,7 +18,7 @@ const settingsStatus = document.querySelector("#settings-status");
 
 function setBusy(busy) {
   submitButton.disabled = busy;
-  submitButton.textContent = busy ? "正在解析并下载…" : "识别并下载";
+  submitButton.querySelector("span").textContent = busy ? "正在解析并下载…" : "识别并下载";
 }
 
 function addLog(text) {
@@ -31,19 +33,29 @@ function showResult(data) {
     ...download.videos.map((video) => `视频${video.width && video.height ? ` ${video.width}×${video.height}` : ""}`)
   ];
   result.replaceChildren();
+  const heading = document.createElement("div");
+  heading.className = "result-heading";
   const summary = document.createElement("p");
-  summary.textContent = `已保存 ${download.saved.length} 个文件：${media.join("、") || "未发现媒体"}`;
+  summary.className = "result-title";
+  summary.textContent = media.join("、") || "未发现媒体";
+  const count = document.createElement("span");
+  count.className = "result-count";
+  count.textContent = `${download.saved.length} 个文件`;
+  heading.append(summary, count);
   const location = document.createElement("p");
-  location.className = "location";
+  location.className = "result-location";
   location.textContent = directories.join("\n");
-  result.append(summary, location);
+  const actions = document.createElement("div");
+  actions.className = "result-actions";
   for (const directory of directories) {
     const openButton = document.createElement("button");
     openButton.className = "secondary";
     openButton.textContent = `打开 ${directory.split("\\").pop()} 文件夹`;
     openButton.addEventListener("click", () => window.xDownload.openFolder(directory));
-    result.append(openButton);
+    actions.append(openButton);
   }
+  result.append(heading);
+  if (directories.length) result.append(location, actions);
 }
 
 function formatBytes(bytes) {
@@ -89,30 +101,47 @@ window.xDownload.onProgress((progress) => {
   progressPanel.hidden = false;
   if (progress.type === "queue" && progress.total_files === 0) {
     progressBar.value = 0;
+    progressPercent.textContent = "0%";
     progressLabel.textContent = "没有可下载的媒体";
     return;
   }
+  if (progress.type === "queue") {
+    progressPercent.textContent = "0%";
+    progressLabel.textContent = `已找到 ${progress.total_files} 个媒体文件`;
+  }
   if (progress.type === "file-start") {
     progressBar.removeAttribute("value");
+    progressPercent.textContent = "处理中";
     progressLabel.textContent = `正在下载第 ${progress.index}/${progress.total_files} 个文件：${progress.name}`;
   }
   if (progress.type === "bytes") {
     if (progress.total) {
       progressBar.max = 100;
-      progressBar.value = (progress.downloaded / progress.total) * 100;
+      const percentage = Math.min(100, Math.round((progress.downloaded / progress.total) * 100));
+      progressBar.value = percentage;
+      progressPercent.textContent = `${percentage}%`;
       progressLabel.textContent = `正在下载第 ${progress.index}/${progress.total_files} 个文件：${progress.name}（${formatBytes(progress.downloaded)} / ${formatBytes(progress.total)}）`;
     } else {
       progressBar.removeAttribute("value");
+      progressPercent.textContent = "处理中";
       progressLabel.textContent = `正在下载第 ${progress.index}/${progress.total_files} 个文件：${progress.name}（${formatBytes(progress.downloaded)}）`;
     }
   }
   if (progress.type === "file-complete") {
     progressBar.value = 100;
+    progressPercent.textContent = "100%";
     progressLabel.textContent = `已完成第 ${progress.index}/${progress.total_files} 个文件：${progress.name}`;
   }
 });
 
 window.xDownload.onLog(addLog);
+
+clearUrlButton.addEventListener("click", () => {
+  urlInput.value = "";
+  urlInput.focus();
+  status.textContent = "等待粘贴一个帖子链接";
+  status.className = "";
+});
 
 form.addEventListener("submit", async (event) => {
   event.preventDefault();
@@ -120,6 +149,7 @@ form.addEventListener("submit", async (event) => {
   result.replaceChildren();
   progressPanel.hidden = true;
   progressBar.value = 0;
+  progressPercent.textContent = "0%";
   status.textContent = "正在连接公开解析服务…";
   status.className = "working";
   setBusy(true);

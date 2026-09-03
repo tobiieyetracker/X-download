@@ -8,54 +8,102 @@
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
-    <main>
-      <header>
-        <p class="eyebrow">LOCAL X MEDIA DOWNLOADER</p>
-        <h1>X Download</h1>
-        <p>粘贴 X（Twitter）帖子链接。应用会自动识别图片或视频，并优先下载最高清版本。</p>
+    <div class="ambient ambient-left" aria-hidden="true"></div>
+    <div class="ambient ambient-right" aria-hidden="true"></div>
+    <main class="app-shell">
+      <header class="topbar">
+        <div class="brand-lockup">
+          <span class="brand-mark" aria-hidden="true">↗</span>
+          <span class="brand-name">X Download</span>
+          <span class="brand-divider" aria-hidden="true"></span>
+          <span class="brand-caption">LOCAL MEDIA WORKSPACE</span>
+        </div>
+        <div class="runtime-badge"><span class="status-dot" aria-hidden="true"></span>本地运行</div>
       </header>
-      <form id="download-form">
-        <label for="post-url">帖子链接</label>
-        <div class="input-row">
-          <input id="post-url" type="url" placeholder="https://x.com/…/status/…" required autofocus />
-          <button id="download-button" type="submit">识别并下载</button>
+
+      <section class="hero-grid">
+        <div class="hero-copy">
+          <p class="eyebrow">PERSONAL MEDIA WORKSPACE</p>
+          <h1>把 X 里的瞬间，<em>收进你的资料库。</em></h1>
+          <p class="hero-lede">粘贴一个帖子链接，自动识别图片与视频，并按媒体自身日期归档。</p>
+          <div class="feature-row" aria-label="功能特点">
+            <span class="feature-chip"><span aria-hidden="true">✦</span> 高清优先</span>
+            <span class="feature-chip"><span aria-hidden="true">⌂</span> 本地归档</span>
+            <span class="feature-chip"><span aria-hidden="true">↯</span> 无需登录</span>
+          </div>
         </div>
-      </form>
-      <p id="status" aria-live="polite">文件将保存到项目目录的 downloads 文件夹。</p>
-      <section id="progress-panel" hidden aria-live="polite">
-        <progress id="progress-bar" max="100" value="0"></progress>
-        <p id="progress-label">准备下载…</p>
+
+        <section class="download-card" aria-labelledby="download-heading">
+          <div class="card-topline">
+            <span>READY TO DOWNLOAD</span>
+            <span class="card-index">01</span>
+          </div>
+          <div class="download-symbol" aria-hidden="true">↗</div>
+          <h2 id="download-heading">从一个链接开始</h2>
+          <p class="card-description">支持公开的 X / Twitter 帖子链接</p>
+          <form id="download-form">
+            <label class="field-label" for="post-url">帖子链接</label>
+            <div class="input-shell">
+              <span class="input-prefix" aria-hidden="true">https://</span>
+              <input id="post-url" type="url" placeholder="x.com/name/status/…" required autofocus />
+              <button id="clear-url" class="clear-button" type="button" aria-label="清空链接" title="清空">×</button>
+            </div>
+            <p class="field-hint">仅接受 HTTPS 的 x.com / twitter.com status 链接</p>
+            <button id="download-button" class="primary-action" type="submit">
+              <span>识别并下载</span><span class="action-arrow" aria-hidden="true">→</span>
+            </button>
+          </form>
+          <p id="status" aria-live="polite">文件将保存到 downloads 文件夹。</p>
+        </section>
       </section>
-      <section id="result" aria-live="polite"></section>
-      <details id="settings-panel">
-        <summary>下载设置</summary>
-        <div class="settings-grid">
-          <label>
-            单个文件上限（MiB）
-            <input id="max-file-size" type="number" min="1" max="8192" step="1" />
-          </label>
-          <label>
-            单次总量上限（MiB）
-            <input id="max-total-size" type="number" min="1" max="32768" step="1" />
-          </label>
-          <label>
-            单次最多文件数
-            <input id="max-files" type="number" min="1" max="100" step="1" />
-          </label>
+
+      <section class="workspace" aria-label="下载状态">
+        <section id="progress-panel" class="progress-card" hidden aria-live="polite">
+          <div class="section-kicker">DOWNLOAD PROGRESS</div>
+          <div class="progress-heading">
+            <p id="progress-label">准备下载…</p>
+            <strong id="progress-percent">0%</strong>
+          </div>
+          <div class="progress-track"><progress id="progress-bar" max="100" value="0"></progress></div>
+        </section>
+        <section id="result" aria-live="polite"></section>
+
+        <div class="utility-grid">
+          <details id="settings-panel" class="utility-card">
+            <summary><span><span class="utility-icon" aria-hidden="true">⚙</span>下载设置</span><span class="summary-note">限制与清理</span></summary>
+            <div class="settings-grid">
+              <label>
+                单个文件上限（MiB）
+                <input id="max-file-size" type="number" min="1" max="8192" step="1" />
+              </label>
+              <label>
+                单次总量上限（MiB）
+                <input id="max-total-size" type="number" min="1" max="32768" step="1" />
+              </label>
+              <label>
+                单次最多文件数
+                <input id="max-files" type="number" min="1" max="100" step="1" />
+              </label>
+            </div>
+            <label class="checkbox-label">
+              <input id="cleanup-failed-tasks" type="checkbox" />
+              <span>下载失败时清理临时文件</span>
+            </label>
+            <div class="settings-actions">
+              <button id="save-settings" class="secondary" type="button">保存设置</button>
+              <span id="settings-status" aria-live="polite"></span>
+            </div>
+          </details>
+          <details open class="utility-card log-card">
+            <summary><span><span class="utility-icon" aria-hidden="true">≋</span>运行日志</span><span class="summary-note">仅本地显示</span></summary>
+            <pre id="log">等待链接…</pre>
+          </details>
         </div>
-        <label class="checkbox-label">
-          <input id="cleanup-failed-tasks" type="checkbox" />
-          下载失败时清理临时文件
-        </label>
-        <div class="settings-actions">
-          <button id="save-settings" class="secondary" type="button">保存设置</button>
-          <span id="settings-status" aria-live="polite"></span>
-        </div>
-      </details>
-      <details open>
-        <summary>运行日志</summary>
-        <pre id="log">等待链接…</pre>
-      </details>
+      </section>
+
+      <footer class="footer-note">
+        <span>LOCAL FIRST</span><span class="footer-line" aria-hidden="true"></span><span>媒体将按自身创建日期归档</span>
+      </footer>
     </main>
     <script src="renderer.js"></script>
   </body>
